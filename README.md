@@ -8,6 +8,7 @@
 
 　プログラムには課題もたくさんあり、mrbgem化もしたいのですが、皆さん、いろいろと助けてください。
 　よろしくお願いします。
+
 ------
   It is a source of mruby board of Wakayama.rb.
   What than first is that the public specification, and I do not even trimmed appearance, but to publish the source.
@@ -21,12 +22,12 @@
 
 #License
 
+    Copyright (c) 2015 Minao Yamamoto
+
 under the MIT License:
 
-    http://www.opensource.org/licenses/mit-license.php
 http://www.opensource.org/licenses/mit-license.php
 
-  Copyright (c) 2015 Minao Yamamoto
 
 #Author
 
