@@ -23,7 +23,7 @@
 
 under the MIT License:
 
-    [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+    [http://www.opensource.org/licenses/mit-license.php] (http://www.opensource.org/licenses/mit-license.php)
 
   Copyright (c) 2015 Minao Yamamoto
 
