@@ -19,6 +19,8 @@
   There are many challenges to the program, but I want to also mrbgem of, everyone, please variously help.
   Thank you.
 
+#How to use Wakayama.rb board
+http://www.slideshare.net/MinaoYamamoto/wakayamarb-board
 
 #License
 
