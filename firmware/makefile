@@ -1,4 +1,4 @@
-TARGET = userapp
+TARGET = wrbb
 #CCPATH = /cygdrive/c/cygwin/usr/local/tkdn-20110720/rx-elf/bin/
 AS  = $(CCPATH)rx-elf-as 
 CC  = $(CCPATH)rx-elf-gcc -fsigned-char -Wall -g -I./include/tkdnhal -I./include/lib/ -I./gr_eepfile -I./gr_mruby -I./gr_mruby/include 

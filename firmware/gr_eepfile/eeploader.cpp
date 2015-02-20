@@ -1,6 +1,12 @@
-//**************************************************
-// EEPROM FIle Loader
-//**************************************************
+/*
+ * EEPROM FIle Loader
+ *
+ * Copyright (c) 2015 Minao Yamamoto
+ *
+ * This software is released under the MIT License.
+ * 
+ * http://opensource.org/licenses/mit-license.php
+ */
 #include <rxduino.h>
 #include <eepfile.h>
 
@@ -15,10 +21,10 @@
 extern char RubyFilename[];
 extern uint8_t RubyCode[];
 char *Arry = (char*)RubyCode;
-bool StopFlg = false;		//‹­§I—¹ƒtƒ‰ƒO
+bool StopFlg = false;		//å¼·åˆ¶çµ‚äº†ãƒ•ãƒ©ã‚°
 
 //**************************************************
-// ƒ‰ƒCƒ““ü—Í
+// ãƒ©ã‚¤ãƒ³å…¥åŠ›
 //**************************************************
 void lineinput(char *arry)
 {
@@ -51,9 +57,9 @@ void lineinput(char *arry)
 }
 
 //**************************************************
-// ƒtƒ@ƒCƒ‹‚ğ•Û‘¶‚µ‚Ü‚·
-// 60sec‘Ò‚Á‚ÄAƒf[ƒ^‚ª‰½‚à‘—‚ç‚ê‚Ä‚±‚È‚¢‚Æ‚«‚É‚ÍA
-// ƒtƒ@ƒCƒ‹•Û‘¶‚ğI—¹‚µ‚Ü‚·
+// ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã—ã¾ã™
+// 60secå¾…ã£ã¦ã€ãƒ‡ãƒ¼ã‚¿ãŒä½•ã‚‚é€ã‚‰ã‚Œã¦ã“ãªã„ã¨ãã«ã¯ã€
+// ãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜ã‚’çµ‚äº†ã—ã¾ã™
 //**************************************************
 void writefile(char *fname, int size)
 {
@@ -68,7 +74,7 @@ void writefile(char *fname, int size)
 
 	Serial.println();
 
-	//ƒVƒŠƒAƒ‹ƒoƒbƒtƒ@Á‹
+	//ã‚·ãƒªã‚¢ãƒ«ãƒãƒƒãƒ•ã‚¡æ¶ˆå»
 	while(k >= 0){	k = Serial.read();	}
 
 	Serial.print("Waiting ");
@@ -130,8 +136,8 @@ void writefile(char *fname, int size)
 }
 
 //**************************************************
-// ƒtƒ@ƒCƒ‹ƒ[ƒ_[
-// –ß‚è’l 0:‰½‚à‚µ‚È‚¢, 1:‹­§I—¹‚·‚é
+// ãƒ•ã‚¡ã‚¤ãƒ«ãƒ­ãƒ¼ãƒ€ãƒ¼
+// æˆ»ã‚Šå€¤ 0:ä½•ã‚‚ã—ãªã„, 1:å¼·åˆ¶çµ‚äº†ã™ã‚‹
 //**************************************************
 int fileloader(const char* str0, const char* str1)
 {
@@ -142,10 +148,10 @@ int fileloader(const char* str0, const char* str1)
 	StopFlg = false;
 
 	while(true){
-		//LED‚ğ“_“”‚·‚é
+		//LEDã‚’ç‚¹ç¯ã™ã‚‹
 		digitalWrite(RB_LED, HIGH);
 
-		//ƒRƒ}ƒ“ƒh‘Ò‚¿
+		//ã‚³ãƒãƒ³ãƒ‰å¾…ã¡
 		Serial.println();
 		Serial.print("WAKAYAMA.RB Board V.");
 		Serial.print(str0);
@@ -165,7 +171,7 @@ int fileloader(const char* str0, const char* str1)
 		else if (Arry[0] == 'D'){
 			if(strlen(Arry) > 2){
 
-				//ƒXƒy[ƒX‚ğ0‚É•Ï‚¦‚ÄAƒ|ƒCƒ“ƒ^‚ğæ“¾
+				//ã‚¹ãƒšãƒ¼ã‚¹ã‚’0ã«å¤‰ãˆã¦ã€ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 				char *fs;
 				int len = strlen(Arry);
 				for(int i=0; i<len; i++){
@@ -181,7 +187,7 @@ int fileloader(const char* str0, const char* str1)
 		else if (Arry[0] == 'R'){
 			if(strlen(Arry) > 2){
 
-				//ƒXƒy[ƒX‚ğ0‚É•Ï‚¦‚ÄAƒ|ƒCƒ“ƒ^‚ğæ“¾
+				//ã‚¹ãƒšãƒ¼ã‚¹ã‚’0ã«å¤‰ãˆã¦ã€ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 				char *fs;
 				int len = strlen(Arry);
 				for(int i=0; i<len; i++){
@@ -193,13 +199,13 @@ int fileloader(const char* str0, const char* str1)
 				strcpy(fname, fs);
 				strcpy( (char*)RubyFilename, fname );
 
-				//‹­§I—¹ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+				//å¼·åˆ¶çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 				StopFlg = true;
 			}
 		}
 		else if(Arry[0] == 'W'){
 			if(strlen(Arry) > 3){
-				//ƒXƒy[ƒX‚ğ0‚É•Ï‚¦‚ÄAƒ|ƒCƒ“ƒ^‚ğæ“¾
+				//ã‚¹ãƒšãƒ¼ã‚¹ã‚’0ã«å¤‰ãˆã¦ã€ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 				char *fs[4];
 				int j = 0;
 				int len = strlen(Arry);
@@ -217,9 +223,9 @@ int fileloader(const char* str0, const char* str1)
 			}
 		}
 		else if(Arry[0] == 'E'){
-			//ƒtƒ@[ƒ€ƒEƒFƒA‘‚«‚İ‘Ò‚¿‚É‚·‚é
-			system_reboot( REBOOT_USERAPP );	//ƒŠƒZƒbƒgŒã‚Éƒ†[ƒUƒAƒvƒŠ‚ğ‹N“®‚·‚é
-			//system_reboot( REBOOT_FIRMWARE );	//ƒŠƒZƒbƒgŒã‚Éƒtƒ@[ƒ€ƒEƒFƒA‚ğ‹N“®‚·‚é
+			//ãƒ•ã‚¡ãƒ¼ãƒ ã‚¦ã‚§ã‚¢æ›¸ãè¾¼ã¿å¾…ã¡ã«ã™ã‚‹
+			system_reboot( REBOOT_USERAPP );	//ãƒªã‚»ãƒƒãƒˆå¾Œã«ãƒ¦ãƒ¼ã‚¶ã‚¢ãƒ—ãƒªã‚’èµ·å‹•ã™ã‚‹
+			//system_reboot( REBOOT_FIRMWARE );	//ãƒªã‚»ãƒƒãƒˆå¾Œã«ãƒ•ã‚¡ãƒ¼ãƒ ã‚¦ã‚§ã‚¢ã‚’èµ·å‹•ã™ã‚‹
 		}
 		else if (Arry[0] == 'L'){
 			Serial.println();
@@ -241,7 +247,7 @@ int fileloader(const char* str0, const char* str1)
 		}
 		else if(Arry[0] == 'S'){
 			if(strlen(Arry) > 2){
-				//ƒXƒy[ƒX‚ğ0‚É•Ï‚¦‚ÄAƒ|ƒCƒ“ƒ^‚ğæ“¾
+				//ã‚¹ãƒšãƒ¼ã‚¹ã‚’0ã«å¤‰ãˆã¦ã€ãƒã‚¤ãƒ³ã‚¿ã‚’å–å¾—
 				char *fs;
 				int len = strlen(Arry);
 				for(int i=0; i<len; i++){

@@ -1,6 +1,12 @@
-//************************************************************************
-// カーネル関連
-//************************************************************************
+/*
+ * カーネル関連
+ *
+ * Copyright (c) 2015 Minao Yamamoto
+ *
+ * This software is released under the MIT License.
+ * 
+ * http://opensource.org/licenses/mit-license.php
+ */
 #include <rxduino.h>
 //#include <string.h>
 //#include <time.h>

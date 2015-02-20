@@ -1,20 +1,29 @@
+/*
+ * EEPROMをファイルのように使うクラス
+ *
+ * Copyright (c) 2015 Minao Yamamoto
+ *
+ * This software is released under the MIT License.
+ * 
+ * http://opensource.org/licenses/mit-license.php
+ */
 //***********************************************************
-// EEPROM���t�@�C���̂悤�Ɏg���N���X
+// EEPROMをファイルのように使うクラス
 //
-// �t�@�C����
-//  �擪�Z�N�^�ɓ����Ă���0x00�܂ł�31�o�C�g�ȓ�
+// ファイル名
+//  先頭セクタに入っている0x00までで31バイト以内
 //
-// �t�@�C���T�C�Y
-//  �擪�Z�N�^�̃t�@�C�����ɑ���2�o�C�g�ɓ����Ă���
+// ファイルサイズ
+//  先頭セクタのファイル名に続く2バイトに入っている
 //
-// �f�[�^
-//  �擪�Z�N�^�̃t�@�C�����ɑ���2�o�C�g�ȍ~�ɓ����Ă���
+// データ
+//  先頭セクタのファイル名に続く2バイト以降に入っている
 //
-// �擪�Z�N�^
+// 先頭セクタ
 //  xxxxxxxxxxxxxxxxxxx00 | 0000 | zzzzzzzzzzzzz...
-//  �t�@�C�����@�@�@00�I�[ �T�C�Y�@���f�[�^
+//  ファイル名　　　00終端 サイズ　生データ
 //
-// Address 0x0000�`0x00FF�܂ł́AEEPROM��Push Pop�Ɏg����
+// Address 0x0000～0x00FFまでは、EEPROMのPush Popに使われる
 //
 //***********************************************************
 #include <rxduino.h>
@@ -36,22 +45,22 @@
 #define EEPSTASECT		1
 #define EEPENDSECT		(EEPSECTORS - 1)
 
-#define EEPFAT_START	0x100	//0x100�`0x13F�܂ł�FAT�ۑ��̈�Ƃ��Ďg���Ă���
+#define EEPFAT_START	0x100	//0x100～0x13FまでをFAT保存領域として使っている
 
-#define EEP_EMPTY	0		//���g�p
-#define EEP_TOP		1		//�擪
-#define EEP_USED	2		//�g�p��
+#define EEP_EMPTY	0		//未使用
+#define EEP_TOP		1		//先頭
+#define EEP_USED	2		//使用中
 
-//�錾
+//宣言
 EEPFILE	EEP;
 
-//Sect[]�� 0�`6�r�b�g(00�`7F)�����̃Z�N�^�������B���̃Z�N�^���������g���w���Ă���Ƃ��͍ŏI�Z�N�^�B
-//�@�@�@�@�@�@�@�@�@9,10�r�b�g�́A0:���g�p�A1:�擪�A2:�g�p�� ������킷�B
-//					11,12�r�b�g�́A0:�I�[�v�����Ă��Ȃ��A1:READ�I�[�v���A2:WRITE||APPEND�I�[�v�� ������킷�B
-static unsigned short Sect[EEPSECTORS];		//512�o�C�g��1�Z�N�^�Ƃ��ĊǗ�����BsaveFat()�̃^�C�~���O��EEPROM�ɕۑ������B
+//Sect[]→ 0～6ビット(00～7F)が次のセクタを示す。次のセクタが自分自身を指しているときは最終セクタ。
+//　　　　　　　　　9,10ビットは、0:未使用、1:先頭、2:使用中 をあらわす。
+//					11,12ビットは、0:オープンしていない、1:READオープン、2:WRITE||APPENDオープン をあらわす。
+static unsigned short Sect[EEPSECTORS];		//512バイトを1セクタとして管理する。saveFat()のタイミングでEEPROMに保存される。
 
 //******************************************************
-// FAT�Z�N�^�[��\�����܂�
+// FATセクターを表示します
 //******************************************************
 void EEPFILE::viewFat(void)
 {
@@ -70,7 +79,7 @@ void EEPFILE::viewFat(void)
 }
 
 //******************************************************
-//�@�Z�N�^�f�[�^��\�����܂�
+//　セクタデータを表示します
 //******************************************************
 void EEPFILE::viewSector(int sect)
 {
@@ -96,36 +105,36 @@ void EEPFILE::viewSector(int sect)
 }
 
 //******************************************************
-// EEPROM FILE�V�X�e�������������܂�
+// EEPROM FILEシステムを初期化します
 //
-// clear��1�̂Ƃ��́A�t�@�C���V�X�e�������������܂�
+// clearが1のときは、ファイルシステムを初期化します
 //******************************************************
 void EEPFILE::begin(int clear)
 {
 	if (clear == 0){
-		// EEPROM����FAT��ǂݍ��݂܂�
+		// EEPROMからFATを読み込みます
 		for (int i=0; i<EEPSECTORS; i++){
 			Sect[i] = EEPROM.read( EEPFAT_START + i*2 ) + (EEPROM.read( EEPFAT_START + i*2 + 1 )<<8);
 		}
 	}
 	else{
-		// �t�@�C���V�X�e�������������܂�
+		// ファイルシステムを初期化します
 
 		for (int i=0; i<EEPSECTORS; i++){
-			Sect[i] = (EEP_USED<<8);		//��x�A�S�Ďg�p���ɂ���
+			Sect[i] = (EEP_USED<<8);		//一度、全て使用中にする
 		}		
 
 		for (int i=EEPSTASECT; i<=EEPENDSECT; i++){
-			Sect[i] = (EEP_EMPTY<<8);		//FAT�g�p�Z�N�^�̂݋󂫏�Ԃɂ���
+			Sect[i] = (EEP_EMPTY<<8);		//FAT使用セクタのみ空き状態にする
 		}
 		saveFat();
 	}
 }
 
 //******************************************************
-// �t�@�C�����I�[�v�����܂�
-// mod: 0:read, 1:write�V�K, 2:Write�ǋL
-// �G���[�̎��́A-1��Ԃ�
+// ファイルをオープンします
+// mod: 0:read, 1:write新規, 2:Write追記
+// エラーの時は、-1を返す
 //******************************************************
 int EEPFILE::fopen(FILEEEP *file, const char *filename, char mode)
 {
@@ -133,11 +142,11 @@ int EEPFILE::fopen(FILEEEP *file, const char *filename, char mode)
 	int len = strlen(filename);
 	unsigned long add = 0;
 
-	//���ɃI�[�v�����Ă��Ȃ��ǂ����̃`�F�b�N
+	//既にオープンしていないどうかのチェック
 	sect = scanFilename(filename);
 	if (sect != -1){
 		if((Sect[sect] & ((EEP_READ | EEP_WRITE) << 10)) != 0){
-			//���ɃI�[�v�����Ă���
+			//既にオープンしている
 			return -1;
 		}
 	}
@@ -152,7 +161,7 @@ int EEPFILE::fopen(FILEEEP *file, const char *filename, char mode)
 			return -1;
 		}
 
-		Sect[sect] |= EEP_READ << 10;			//�t�@�C���g�p���t���O
+		Sect[sect] |= EEP_READ << 10;			//ファイル使用中フラグ
 
 		add = sect * EEPSECTOR_SIZE;
 		file->filesize = (EEPROM.read( add + len + 1 ) & 0xFF) + ((EEPROM.read( add + len + 2 ) & 0xFF) << 8);
@@ -166,17 +175,17 @@ int EEPFILE::fopen(FILEEEP *file, const char *filename, char mode)
 		DEBUG_PRINT("mode", (int)mode);
 		DEBUG_PRINT("sect", sect);
 
-		//�t�@�C�������邩������Ȃ��̂ŁA�Ƃ肠�����폜���Ă����܂��B�Ȃ�������-1���Ԃ��Ă��邾��
+		//ファイルがあるかもしれないので、とりあえず削除しておきます。なかったら-1が返ってくるだけ
 		fdelete(filename);
 
-		//�󂢂Ă���Z�N�^��T��
-		sect = scanEmptySector((int)millis() & 0x3F);	//(int)millis()&0x3F�́A�����̗v�f���܂܂��Ă���Z�N�^�̕��������p(�E�F�A���x�����O���l��)
+		//空いているセクタを探す
+		sect = scanEmptySector((int)millis() & 0x3F);	//(int)millis()&0x3Fは、乱数の要素を含ませているセクタの平滑化利用(ウェアレベリングを考慮)
 		if (sect == -1){
-			//�t�@�C���������ς�������
+			//ファイルがいっぱいだった
 			return -1;
 		}
 
-		// �t�@�C���|�C���^�̏������݂��s��
+		// ファイルポインタの書き込みを行う
 		setFile( file, filename, sect, EEP_WRITE );
 		return 0;
 	}
@@ -185,7 +194,7 @@ int EEPFILE::fopen(FILEEEP *file, const char *filename, char mode)
 		DEBUG_PRINT("mode", (int)mode);
 		DEBUG_PRINT("sect", sect);
 
-		Sect[sect] |= EEP_WRITE << 10;			//�t�@�C���g�p���t���O
+		Sect[sect] |= EEP_WRITE << 10;			//ファイル使用中フラグ
 		
 		add = sect * EEPSECTOR_SIZE;
 		file->filesize = (EEPROM.read( add + len + 1 ) & 0xFF) + ((EEPROM.read( add + len + 2 ) & 0xFF) << 8);
@@ -198,9 +207,9 @@ int EEPFILE::fopen(FILEEEP *file, const char *filename, char mode)
 }
 
 //******************************************************
-// �t�@�C���̃V�[�N
-// orign����Ƃ����I�t�Z�b�g�l�Ɉړ�����
-// �t�@�C���̐擪����̈ʒu��Ԃ�
+// ファイルのシーク
+// orignを基準としたオフセット値に移動する
+// ファイルの先頭からの位置を返す
 //******************************************************
 int EEPFILE::fseek(FILEEEP *file, int offset, int origin)
 {
@@ -228,8 +237,8 @@ int EEPFILE::fseek(FILEEEP *file, int offset, int origin)
 }
 
 //******************************************************
-// �t�@�C�����폜���܂�
-// �G���[�̎��́A-1��Ԃ�
+// ファイルを削除します
+// エラーの時は、-1を返す
 //******************************************************
 int EEPFILE::fdelete(const char *filename)
 {
@@ -241,23 +250,23 @@ int EEPFILE::fdelete(const char *filename)
 
 	int next;
 	while(true){
-		next = Sect[sect] & 0x7F;		//���̃Z�N�^�ǂݍ���
-		Sect[sect] = EEP_EMPTY << 8;	//���Z�N�^����ɂ���
-		if (sect == next){				//�ŏI�Z�N�^�ɂ͎����̃Z�N�^�ԍ��������Ă���
+		next = Sect[sect] & 0x7F;		//次のセクタ読み込み
+		Sect[sect] = EEP_EMPTY << 8;	//現セクタを空にする
+		if (sect == next){				//最終セクタには自分のセクタ番号が書いてある
 			break;
 		}
 		sect = next;
 	}
 
-	//FAT�f�[�^��EEPROM�ɕۑ�����
+	//FATデータをEEPROMに保存する
 	saveFat();
 
 	return 0;
 }
 
 //******************************************************
-// ��������
-// file->seek�ʒu�Ɏw��ʂ̃f�[�^���������݂܂�
+// 書き込み
+// file->seek位置に指定量のデータを書き込みます
 //******************************************************
 int EEPFILE::fwrite(FILEEEP *file, char *arry, int *len)
 {
@@ -273,27 +282,27 @@ int EEPFILE::fwrite(FILEEEP *file, char *arry, int *len)
 }
 
 //******************************************************
-// ��������
-// file->seek�ʒu�ɏ������݂܂�
+// 書き込み
+// file->seek位置に書き込みます
 //******************************************************
 int EEPFILE::fwrite(FILEEEP *file, char dat)
 {
 	int secadd = 0;
 
-	//�������ރZ�N�^�����߂܂�
+	//書き込むセクタを求めます
 	int sect = getSect(file, &secadd);
 	if (sect == -1){
 		return -1;
 	}
 
-	//�������݂܂�
+	//書き込みます
 	int add = sect * EEPSECTOR_SIZE + secadd;
 	epWrite( add, dat );
 
-	//seek��1�i�߂܂�
+	//seekを1つ進めます
 	file->seek++;
 
-	//seek�ʒu��fileSize�𒴂����ꍇ
+	//seek位置がfileSizeを超えた場合
 	if (file->seek > file->filesize){
 		file->filesize = file->seek;
 	}
@@ -301,12 +310,12 @@ int EEPFILE::fwrite(FILEEEP *file, char dat)
 }
 
 //******************************************************
-// �ǂݍ���
-// file->seek�ʒu��ǂݍ��݂܂�
+// 読み込み
+// file->seek位置を読み込みます
 //******************************************************
 int EEPFILE::fread(FILEEEP *file)
 {
-	//seek�ʒu��fileSize�ȏ�̏ꍇ
+	//seek位置がfileSize以上の場合
 	if (file->seek >= file->filesize){
 		file->seek = file->filesize;
 		return -1;
@@ -314,24 +323,24 @@ int EEPFILE::fread(FILEEEP *file)
 
 	int secadd = 0;
 
-	//�ǂݍ��ރZ�N�^�����߂܂�
+	//読み込むセクタを求めます
 	int sect = getSect(file, &secadd);
-	//if (sect == -1){		//�����肦�Ȃ��̂�
+	//if (sect == -1){		//←ありえないので
 	//	return -1;
 	//}
 
-	//�ǂݍ��݂܂�
+	//読み込みます
 	int add = sect * EEPSECTOR_SIZE + secadd;
 	int ret = EEPROM.read( add );
 
-	//seek��1�i�߂܂�
+	//seekを1つ進めます
 	file->seek++;
 
 	return ret;
 }
 
 //******************************************************
-// �t�@�C������܂�
+// ファイルを閉じます
 //******************************************************
 void EEPFILE::fclose(FILEEEP *file)
 {
@@ -345,7 +354,7 @@ void EEPFILE::fclose(FILEEEP *file)
 
 	DEBUG_PRINT("fclose Sect[sect]", Sect[sect]);
 	if(((Sect[sect] >> 10) & 0x3) == EEP_WRITE){
-		//�t�@�C���T�C�Y���������݂܂�
+		//ファイルサイズを書き込みます
 		DEBUG_PRINT("fclose", "EEP_WRITE");
 		int add = file->stasector * EEPSECTOR_SIZE;
 		epWrite(add + file->offsetaddress - 1, (file->filesize>>8) & 0xFF);
@@ -354,15 +363,15 @@ void EEPFILE::fclose(FILEEEP *file)
 
 	int next;
 	while(true){
-		Sect[sect] = (Sect[sect] & 0xF3FF) | (EEP_CLOSE << 10);	//�Z�N�^��Close�t���O�Z�b�g
-		next = Sect[sect] & 0x7F;		//���̃Z�N�^�ǂݍ���
-		if (sect == next){				//�ŏI�Z�N�^�ɂ͎����̃Z�N�^�ԍ��������Ă���
+		Sect[sect] = (Sect[sect] & 0xF3FF) | (EEP_CLOSE << 10);	//セクタにCloseフラグセット
+		next = Sect[sect] & 0x7F;		//次のセクタ読み込み
+		if (sect == next){				//最終セクタには自分のセクタ番号が書いてある
 			break;
 		}
 		sect = next;
 	}
 
-	//FAT�f�[�^��EEPROM�ɕۑ�����
+	//FATデータをEEPROMに保存する
 	saveFat();
 
 	file->filesize = 0;
@@ -372,7 +381,7 @@ void EEPFILE::fclose(FILEEEP *file)
 }
 
 //******************************************************
-// �t�@�C���̏I�[������true��Ԃ��܂�
+// ファイルの終端したらtrueを返します
 //******************************************************
 bool EEPFILE::fEof(FILEEEP *file)
 {
@@ -380,14 +389,14 @@ bool EEPFILE::fEof(FILEEEP *file)
 }
 
 //******************************************************
-// �Z�N�^�ɕۑ�����Ă���t�@�C������Ԃ��܂�
-// �Z�N�^�Ƀt�@�C������������� filename[0]=0 ���Ԃ�܂�
-// �߂�l�̓t�@�C���T�C�Y�ł�
+// セクタに保存されているファイル名を返します
+// セクタにファイル名が無ければ filename[0]=0 が返ります
+// 戻り値はファイルサイズです
 //******************************************************
 int EEPFILE::fdir(int sect, char *filename)
 {
 	int ret = 0;
-	//�t�@�C���擪�Z�N�^��
+	//ファイル先頭セクタか
 	if(((Sect[sect] >> 8) & 0x3) == EEP_TOP){
 		getFilename(sect, filename);
 		ret = ffilesize( filename );
@@ -399,7 +408,7 @@ int EEPFILE::fdir(int sect, char *filename)
 }
 
 //******************************************************
-// �t�@�C���T�C�Y��Ԃ��܂�
+// ファイルサイズを返します
 //******************************************************
 int EEPFILE::ffilesize(const char *filename)
 {
@@ -420,8 +429,8 @@ int EEPFILE::ffilesize(const char *filename)
 //***
 
 //*********
-// �t�@�C�������擾����
-// �t�@�C��������(�o�C�g)���Ԃ�B�Ō��0x00�͐����Ȃ��B
+// ファイル名を取得する
+// ファイル文字数(バイト)が返る。最後の0x00は数えない。
 //*********
 int EEPFILE::getFilename(int sect, char *filename)
 {
@@ -447,9 +456,9 @@ int EEPFILE::getFilename(int sect, char *filename)
 }
 
 //*********
-// �t�@�C������T��(�t�@�C������31�o�C�g�܂�)
-// ���������Z�N�^�ԍ���Ԃ�
-// ������Ȃ��Ƃ��́A-1��Ԃ�
+// ファイル名を探す(ファイル名は31バイトまで)
+// 見つかったセクタ番号を返す
+// 見つからないときは、-1を返す
 //*********
 int EEPFILE::scanFilename(const char *filename)
 {
@@ -486,9 +495,9 @@ int EEPFILE::scanFilename(const char *filename)
 }
 
 //*********
-// �������܂�Ă��Ȃ��u���b�N��T��
-// �u���b�N�ԍ���Ԃ�
-// �S�ď������܂�Ă���Ƃ��́A-1��Ԃ�
+// 書き込まれていないブロックを探す
+// ブロック番号を返す
+// 全て書き込まれているときは、-1を返す
 //*********
 int EEPFILE::scanEmptySector(int start)
 {
@@ -512,7 +521,7 @@ int EEPFILE::scanEmptySector(int start)
 }
 
 //*********
-// �t�@�C���|�C���^�̏������݂��s��
+// ファイルポインタの書き込みを行う
 //*********
 void EEPFILE::setFile( FILEEEP *file, const char *filename, int sect, int mode)
 {
@@ -520,18 +529,18 @@ void EEPFILE::setFile( FILEEEP *file, const char *filename, int sect, int mode)
 	int len = strlen(filename);
 	int a1;
 
-	//�Z�N�^�z����Z�b�g���܂�(�������g���Z�b�g)
-	Sect[sect] = sect & 0x7F;		//�Ƃ肠�����g�b�v�Z�N�^�ԍ����Z�b�g����
-	Sect[sect] |= EEP_TOP << 8;		//�t�@�C���g�b�v�t���O
-	Sect[sect] |= mode << 10;		//�t�@�C���g�p���t���O
+	//セクタ配列をセットします(自分自身をセット)
+	Sect[sect] = sect & 0x7F;		//とりあえずトップセクタ番号をセットする
+	Sect[sect] |= EEP_TOP << 8;		//ファイルトップフラグ
+	Sect[sect] |= mode << 10;		//ファイル使用中フラグ
 
-	//�t�@�C��������������
+	//ファイル名を書き込む
 	for( int i=0; i<len; i++){
 		epWrite( add + i, filename[i] );
 	}
 	epWrite( add + len, 0 );
 
-	//�t�@�C���T�C�Y 0 �Z�b�g
+	//ファイルサイズ 0 セット
 	epWrite( add + len + 1, 0 );
 	epWrite( add + len + 2, 0 );
 
@@ -542,13 +551,13 @@ void EEPFILE::setFile( FILEEEP *file, const char *filename, int sect, int mode)
 }
 
 //*********
-// FAT��EEPROM�ɕۑ����܂�
+// FATをEEPROMに保存します
 //*********
 void EEPFILE::saveFat(void)
 {	
 	//int a1, a2;
 	for( int i=0; i<EEPSECTORS; i++){
-		// 11,12�r�b�g�ڂ�0�ɂ��ĕۑ����� 1111 0011 1111 1111
+		// 11,12ビット目は0にして保存する 1111 0011 1111 1111
 		//a1 = (Sect[i] & (~(3 << 10))) & 0xFF;
 		//a2 = ((Sect[i] & (~(3 << 10)))>>8) & 0xFF;
 		epWrite( EEPFAT_START + i*2, (Sect[i] & (~(3 << 10))) & 0xFF);
@@ -557,9 +566,9 @@ void EEPFILE::saveFat(void)
 }
 
 //*********
-// file->seek�������ꏊ�̃Z�N�^�����߂܂�
-// ���̃Z�N�^�̃A�h���X��add�ɓ���ĕԂ��܂�
-// �S�ď������܂�Ă���Ƃ��́A-1��Ԃ�
+// file->seekが示す場所のセクタを求めます
+// そのセクタのアドレスもaddに入れて返します
+// 全て書き込まれているときは、-1を返す
 //*********
 int EEPFILE::getSect(FILEEEP *file, int *add)
 {
@@ -567,7 +576,7 @@ int EEPFILE::getSect(FILEEEP *file, int *add)
 		return -1;
 	}
 
-	//���Z�N�^���������߂�
+	//何セクタ分かを求める
 	int n = (file->offsetaddress + file->seek) / EEPSECTOR_SIZE;
 	*add = (file->offsetaddress + file->seek) % EEPSECTOR_SIZE;
 
@@ -578,16 +587,16 @@ int EEPFILE::getSect(FILEEEP *file, int *add)
 	//DEBUG_PRINT("getSect file->filesize", file->filesize);
 	//DEBUG_PRINT("getSect file->seek", file->seek);
 
-	//�Z�N�^��ǂ�������
+	//セクタを追っかける
 	for(int i=0; i<n; i++){
 		sect = Sect[sect] & 0x7F;
 	}
 	//DEBUG_PRINT("getSect sect 1", sect);
 	//DEBUG_PRINT("getSect EEP_WRITE", (Sect[file->stasector] >> 10) & 0x3);
 
-	//�������݃I�[�v���̂Ƃ�
+	//書き込みオープンのとき
 	if(((Sect[file->stasector] >> 10) & 0x3) == EEP_WRITE){
-		//����؂�Ă���Ƃ��́A
+		//割り切れているときは、
 		if(*add == 0){
 
 			//DEBUG_PRINT("getSect file->stasector", file->stasector);
@@ -595,23 +604,23 @@ int EEPFILE::getSect(FILEEEP *file, int *add)
 			//DEBUG_PRINT("getSect file->offsetaddress", file->offsetaddress);
 			//DEBUG_PRINT("getSect file->seek", file->seek);
 
-			//����؂�Ă���̂ɁASect[sect]�ɂ��鎟�̃Z�N�^�ԍ����������g�ł�������A
+			//割り切れているのに、Sect[sect]にある次のセクタ番号が自分自身であったら、
 			if (file->seek >= file->filesize){
-				//�V�K�Z�N�^��p�ӂ���
-				int newsect = scanEmptySector((int)millis() & 0x3F);	//(int)millis()&0x3F�́A�����̗v�f���܂܂��Ă���Z�N�^�̕��������p(�E�F�A���x�����O���l��)
+				//新規セクタを用意する
+				int newsect = scanEmptySector((int)millis() & 0x3F);	//(int)millis()&0x3Fは、乱数の要素を含ませているセクタの平滑化利用(ウェアレベリングを考慮)
 				if (newsect == -1){
-					//�t�@�C���������ς�������
+					//ファイルがいっぱいだった
 					return -1;
 				}
-				//���̃Z�N�^������
+				//次のセクタを入れる
 				Sect[sect] = (Sect[sect] & 0xFF80) | newsect;
 
 				DEBUG_PRINT("getSect newsect", newsect);
 
-				//�Z�N�^�z����Z�b�g���܂�
-				Sect[newsect] = newsect & 0x7F;			//�Ō���Ȃ̂Ŏ������g���Z�b�g
-				Sect[newsect] |= EEP_USED << 8;			//�t�@�C�����[�Y�t���O
-				Sect[newsect] |= EEP_WRITE << 10;		//�t�@�C���g�p���t���O
+				//セクタ配列をセットします
+				Sect[newsect] = newsect & 0x7F;			//最後尾なので自分自身をセット
+				Sect[newsect] |= EEP_USED << 8;			//ファイルユーズフラグ
+				Sect[newsect] |= EEP_WRITE << 10;		//ファイル使用中フラグ
 				sect = newsect;
 			}
 		}
@@ -620,8 +629,8 @@ int EEPFILE::getSect(FILEEEP *file, int *add)
 }
 
 //*********
-// EEPROM�ɏ������݂܂�
-// �G���[�̂Ƃ���-1��Ԃ�
+// EEPROMに書き込みます
+// エラーのときは-1を返す
 //*********
 int EEPFILE::epWrite(unsigned long addr,unsigned char data)
 {

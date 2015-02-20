@@ -1,6 +1,16 @@
-//**********************************************************
-// Light weight Lanuage Board Ruby 
-//**********************************************************
+/*
+ * WRBB Main
+ *
+ * Copyright (c) 2015 Minao Yamamoto
+ *
+ * This software is released under the MIT License.
+ * 
+ * http://opensource.org/licenses/mit-license.php
+ *
+ * Light weight Lanuage Board Ruby
+ * Wakayamarb board 
+ *
+ */
 #ifndef _LLBRUBY_H_
 #define _LLBRUBY_H_  1
 

@@ -1,6 +1,12 @@
-//***********************************************************
-// EEPROM‚ğƒtƒ@ƒCƒ‹‚Ì‚æ‚¤‚Ég‚¤ƒNƒ‰ƒX
-//***********************************************************
+/*
+ * EEPROMã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ˆã†ã«ä½¿ã†ã‚¯ãƒ©ã‚¹
+ *
+ * Copyright (c) 2015 Minao Yamamoto
+ *
+ * This software is released under the MIT License.
+ * 
+ * http://opensource.org/licenses/mit-license.php
+ */
 #ifndef _EEPFILE_H_
 #define _EEPFILE_H_ 1
 
@@ -8,12 +14,12 @@
 
 #define EEPFILENAME_SIZE	32
 
-#define EEP_CLOSE	0		//ƒI[ƒvƒ“‚µ‚Ä‚¢‚È‚¢
-#define EEP_READ	1		//READƒI[ƒvƒ“
-#define EEP_WRITE	2		//WRITEƒI[ƒvƒ“
-#define EEP_APPEND	3		//APPENDƒI[ƒvƒ“
+#define EEP_CLOSE	0		//ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ã„ãªã„
+#define EEP_READ	1		//READã‚ªãƒ¼ãƒ—ãƒ³
+#define EEP_WRITE	2		//WRITEã‚ªãƒ¼ãƒ—ãƒ³
+#define EEP_APPEND	3		//APPENDã‚ªãƒ¼ãƒ—ãƒ³
 
-//EEPƒtƒ@ƒCƒ‹\‘¢‘Ì
+//EEPãƒ•ã‚¡ã‚¤ãƒ«æ§‹é€ ä½“
 typedef struct {
 	short stasector;
 	unsigned short filesize;
