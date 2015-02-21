@@ -1,7 +1,7 @@
 # Wakayama-mruby-board　ARIDA-1.2(2015/1/4)
 
 　Wakayama.rb のmrubyボードのソースです。
-　何より先ずは公開仕様ということで、体裁も整えていないのですが、ソースを公開します。
+　何より先ずは「公開」ということで、体裁も整えていないのですが、ソースを公開します。
 
 　Wakayama.rbボードのCPUはRenesasのRX63Nです。
 　特殊電子回路さんの無償版FreeRXduinoライブラリを用いて作られています。
@@ -11,7 +11,7 @@
 
 ------
   It is a source of mruby board of Wakayama.rb.
-  What than first is that the public specification, and I do not even trimmed appearance, but to publish the source.
+  What than first is that the "open source", I do not have also trimmed appearance, but to publish the source.
 
   CPU of Wakayama.rb board is RX63N of Renesas.
   It is made using Tokusyudenshikairo's free version FreeRXduino library.
