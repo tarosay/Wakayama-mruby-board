@@ -9,7 +9,7 @@
 　プログラムには課題もたくさんあり、mrbgem化もしたいのですが、皆さん、いろいろと助けてください。
 　よろしくお願いします。
 
-　mruby ver1.0.0 と mruby ver1.1.0 の両方の対応ソースを同梱しました。firmware1がver1.1.0対応、firmware2がver1.1.0対応です。
+　mruby ver1.0.0 と mruby ver1.1.0 の両方の対応ソースを同梱しました。firmware1がver1.0.0対応、firmware2がver1.1.0対応です。
 　mruby ver1.1.0 はWakayama.rbボードV2.0対応しており、RTCのクラスが実装されています。旧ボードでも動作しますが、RTCは使わないでください。
 
 　mruby ver1.0.0は、ByteCode Format Ver.0002です。
