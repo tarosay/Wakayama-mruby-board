@@ -6,7 +6,7 @@ MRuby::Toolchain.new(:rx63n) do |conf|
   conf.cc do |cc|
     cc.command="#{TOOL_PATH}/rx-elf-gcc"
     cc.flags << "-Wall -g -O2"
-    cc.defines << "__CYGWIN32__"
+		cc.defines << "__CYGWIN32__"
     cc.compile_options = "%{flags} -o %{outfile} -c %{infile}"
 
     conf.linker do |linker|
