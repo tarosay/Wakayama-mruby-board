@@ -161,6 +161,17 @@ mrb_value mrb_kernel_millis(mrb_state *mrb, mrb_value self)
 }
 
 //**************************************************
+// マイクロ秒を取得します: micros
+//	micros()
+// 戻り値
+//	起動してからのマイクロ秒数
+//**************************************************
+mrb_value mrb_kernel_micros(mrb_state *mrb, mrb_value self)
+{
+	return mrb_fixnum_value( (mrb_int)micros() );
+}
+
+//**************************************************
 // デジタルリード: digitalRead
 //	digitalRead(pin)
 //	pin: ピンの番号
@@ -291,6 +302,7 @@ void kernel_Init(mrb_state *mrb)
 
 	mrb_define_method(mrb, mrb->kernel_module, "delay", mrb_kernel_delay, ARGS_REQ(1));
 	mrb_define_method(mrb, mrb->kernel_module, "millis", mrb_kernel_millis, ARGS_NONE());
+	mrb_define_method(mrb, mrb->kernel_module, "micros", mrb_kernel_micros, ARGS_NONE());
 
 	mrb_define_method(mrb, mrb->kernel_module, "led", mrb_kernel_led, ARGS_REQ(1));
 }
