@@ -5,12 +5,22 @@
 # 赤・・・・・・3.3V
 # 茶・・・・・・GND
 #################################
+@Mem = MemFile
+@Srv = Servo
+@S = Serial
+@Sy = System
+
+@SrvPin = 8
 
 ###################################
 # いろいろな初期化
 ###################################
 def init()
-	Serial.begin(0, 115200)		#USBシリアル通信の初期化
+	@S.begin(0, 115200)		#USBシリアル通信の初期化
+
+	#8番ピンをサーボ制御ピンに設定
+	@Srv.attach(0, @SrvPin)
+	@Srv.write(0, 0) #0度にする
 end
 
 ###################################
@@ -18,37 +28,32 @@ end
 ###################################
 def fileloader()
 	#USBからのキー入力あり
-	if(Serial.available(0)>0)then
+	if(@S.available(0)>0)then
 		#内蔵ファイルローダーを呼ぶ
-		Sys.fileload()
+		@Sy.fileload()
 	end
 end
 
 
 ################ ここからMainプログラム #################
 
-	#いろいろな初期化
-	init()
-  ss = 1
-	g_pos = 0
-	g_inc = 15
+#いろいろな初期化
+init()
 
-  pinMode(7, 0)
-	Srv.attach(0, 8)
-	Srv.write(0, g_pos)
+ss = 1
+g_pos = 0
+g_inc = 15
 
-	#無限にループします
-	while(true) do
-		delay(250)
-	  led(ss)
-		ss = 1 - ss
-	 #if(digitalRead(7) == 0)then
-			g_pos = g_pos + g_inc
-      Srv.write(0, g_pos)
-				
-      if(g_pos >= 180 || g_pos <= 0)then
-        g_inc = g_inc * -1
-			end
-    #end
-		fileloader()	# ファイルローダー起動
+#無限にループします
+while(true) do
+	delay(250)
+	led(ss)
+	ss = 1 - ss
+	g_pos = g_pos + g_inc
+	@Srv.write(0, g_pos)
+
+	if(g_pos >= 180 || g_pos <= 0)then
+		g_inc = g_inc * -1
 	end
+	fileloader()	# ファイルローダー起動
+end
