@@ -4,8 +4,8 @@
 ** See Copyright Notice in mruby.h
 */
 
-#ifndef KHASH_H
-#define KHASH_H
+#ifndef MRUBY_KHASH_H
+#define MRUBY_KHASH_H
 
 #if defined(__cplusplus)
 extern "C" {
@@ -148,20 +148,23 @@ kh_fill_flags(uint8_t *p, uint8_t c, size_t len)
       new_n_buckets = KHASH_MIN_SIZE;                                   \
     khash_power2(new_n_buckets);                                        \
     {                                                                   \
+      kh_##name##_t hh;                                                 \
       uint8_t *old_ed_flags = h->ed_flags;                              \
       khkey_t *old_keys = h->keys;                                      \
       khval_t *old_vals = h->vals;                                      \
       khint_t old_n_buckets = h->n_buckets;                             \
       khint_t i;                                                        \
-      h->n_buckets = new_n_buckets;                                     \
-      kh_alloc_##name(mrb, h);                                          \
+      hh.n_buckets = new_n_buckets;                                     \
+      kh_alloc_##name(mrb, &hh);                                        \
       /* relocate */                                                    \
       for (i=0 ; i<old_n_buckets ; i++) {                               \
         if (!__ac_iseither(old_ed_flags, i)) {                          \
-          khint_t k = kh_put_##name(mrb, h, old_keys[i], NULL);         \
-          if (kh_is_map) kh_value(h,k) = old_vals[i];                   \
+          khint_t k = kh_put_##name(mrb, &hh, old_keys[i], NULL);       \
+          if (kh_is_map) kh_value(&hh,k) = old_vals[i];                 \
         }                                                               \
       }                                                                 \
+      /* copy hh to h */                                                \
+      *h = hh;                                                          \
       mrb_free(mrb, old_keys);                                          \
     }                                                                   \
   }                                                                     \
@@ -267,4 +270,4 @@ typedef const char *kh_cstr_t;
 }  /* extern "C" { */
 #endif
 
-#endif  /* KHASH_H */
+#endif  /* MRUBY_KHASH_H */
