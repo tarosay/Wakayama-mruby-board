@@ -1,4 +1,4 @@
-# Wakayama-mruby-board　ARIDA-1.3(2015/3/22) | ARIDA-2.0(2015/3/22)
+# Wakayama-mruby-board　ARIDA-2.4(2015/6/26)
 
 　Wakayama.rb のmrubyボードのソースです。
 　何より先ずは「公開」ということで、体裁も整えていないのですが、ソースを公開します。
@@ -9,13 +9,8 @@
 　プログラムには課題もたくさんあり、mrbgem化もしたいのですが、皆さん、いろいろと助けてください。
 　よろしくお願いします。
 
-　mruby ver1.0.0 と mruby ver1.1.0 の両方の対応ソースを同梱しました。firmware1がver1.0.0対応、firmware2がver1.1.0対応です。
-　mruby ver1.1.0 はWakayama.rbボードV2.0対応しており、RTCのクラスが実装されています。旧ボードでも動作しますが、RTCは使わないでください。
-
-　mruby ver1.0.0は、ByteCode Format Ver.0002です。
+  git branch 2.00 は、mruby ver1.1.0 対応ソースです。
 　mruby ver1.1.0は、ByteCode Format Ver.0003です。
-
-　この違いがありますので、firware1とfirmware2を確認して使用してください。
 
 ------
   It is a source of mruby board of Wakayama.rb.
