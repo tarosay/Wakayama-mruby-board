@@ -209,7 +209,7 @@ int ret = 0;
 //**************************************************
 void mem_Init(mrb_state *mrb)
 {
-	struct RClass *memdModule = mrb_define_module(mrb, "Mem");
+	struct RClass *memdModule = mrb_define_module(mrb, "MemFile");
 
 	mrb_define_module_function(mrb, memdModule, "read", mrb_mem_read, MRB_ARGS_REQ(1));
 

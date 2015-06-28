@@ -213,7 +213,7 @@ void servo_Init(mrb_state *mrb)
 		servo[i] = 0;
 	}
 
-	struct RClass *servoModule = mrb_define_module(mrb, "Srv");
+	struct RClass *servoModule = mrb_define_module(mrb, "Servo");
 
 	mrb_define_module_function(mrb, servoModule, "attach", mrb_servo_attach, MRB_ARGS_REQ(2) | MRB_ARGS_OPT(2));
 	mrb_define_module_function(mrb, servoModule, "write", mrb_servo_write, MRB_ARGS_REQ(2));

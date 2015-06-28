@@ -32,6 +32,10 @@
 	#include "sRtc.h"
 #endif
 
+#if defined(MRUBY_VER) && ( MRUBY_VER == UmeJam )
+	#include "sPanCake.h"
+#endif
+
 //バージョンのセット
 volatile char	ProgVer[] = {WRBB_VERSION};
 
@@ -67,6 +71,11 @@ bool notFinishFlag = true;
 #else
 	rtc_Init(mrb);		//RTC関連メソッドの設定
 #endif
+
+#if defined(MRUBY_VER) && ( MRUBY_VER == UmeJam )
+	pancake_Init(mrb);		//PanCake関連メソッドの設定
+#endif
+
 
 
 

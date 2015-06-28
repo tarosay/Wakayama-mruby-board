@@ -16,15 +16,18 @@
 
 #define RUBY_CODE_SIZE (1024 * 4)		//4kBまで実行可能とする
 
-
 //バージョンを定義します
 //#define MRUBY_VER	100
 #define MRUBY_VER	110
+//#define MRUBY_VER	UmeJam
+
 
 #if defined(MRUBY_VER) && ( MRUBY_VER == 100 )
-	#define WRBB_VERSION "ARIDA-1.04 (2015/6/26)"
+	#define WRBB_VERSION "ARIDA-1.04 (2015/6/27)"
+#elif defined(MRUBY_VER) && ( MRUBY_VER == UmeJam )
+	#define WRBB_VERSION "UmeJam-3.04 (2015/6/27)"
 #else
-	#define WRBB_VERSION "ARIDA-2.04 (2015/6/26)"
+	#define WRBB_VERSION "ARIDA-2.04 (2015/6/27)"
 #endif
 
 //#define    DEBUG                1        // Define if you want to debug

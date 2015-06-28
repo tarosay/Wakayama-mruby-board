@@ -201,6 +201,7 @@ int fileloader(const char* str0, const char* str1)
 
 				//強制終了フラグを立てる
 				StopFlg = true;
+				break;
 			}
 		}
 		else if(Arry[0] == 'W'){

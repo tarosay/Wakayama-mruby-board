@@ -126,15 +126,6 @@ void setup()
 	if( FILE_LOAD == 1 ){
 		fileloader((const char*)ProgVer,MRUBY_VERSION);
 	}
-
-	////接続後10秒待っている間に入力があったら、EEPROMファイルローダーに飛ぶ
-	//unsigned long tm = millis() + 10000;
-	//while(tm > millis()){
-	//	if (Serial.available() > 0){
-	//		fileloader((const char*)ProgVer,MRUBY_VERSION);
-	//		break;
-	//	}
-	//}
 }
 
 //**************************************************

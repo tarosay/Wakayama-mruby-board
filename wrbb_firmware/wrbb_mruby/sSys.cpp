@@ -162,7 +162,7 @@ mrb_value mrb_system_fileload(mrb_state *mrb, mrb_value self)
 //**************************************************
 void sys_Init(mrb_state *mrb)
 {
-	struct RClass *systemModule = mrb_define_module(mrb, "Sys");
+	struct RClass *systemModule = mrb_define_module(mrb, "System");
 
 	mrb_define_module_function(mrb, systemModule, "exit", mrb_system_exit, MRB_ARGS_NONE());
 	mrb_define_module_function(mrb, systemModule, "setrun", mrb_system_setrun, MRB_ARGS_REQ(1));
