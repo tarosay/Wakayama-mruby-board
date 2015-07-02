@@ -177,7 +177,8 @@ bool notFinishFlag = true;
 					notFinishFlag = false;
 
 					//fwrite(str->ptr, len, 1, stdout);	//エラー内容を標準出力する
-					fwrite(RSTRING_PTR(obj), len, 1, stdout);	//エラー内容を標準出力する
+					//fwrite(RSTRING_PTR(obj), len, 1, stdout);	//エラー内容を標準出力する
+					Serial.println(RSTRING_PTR(obj));
 					break;
 				}
 			}

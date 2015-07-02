@@ -16,6 +16,8 @@
 #include "../llbruby.h"
 #include "sKernel.h"
 
+#define  PANCAKE_BAURATE	115200
+
 extern CSerial *serial[];
 
 unsigned char PanSend[96];
@@ -436,23 +438,44 @@ mrb_value text;
 }
 
 //**************************************************
-// ライブラリを定義します
+// PanCakeで使うシリアルポート番号を指定: PanCake.serial
+//  PanCake.serial(num)
+//  num: シリアルポート番号(1〜3)
 //**************************************************
-void pancake_Init(mrb_state *mrb)
-{	
-	//シリアル num=1 を使うので通信の初期化をします
+mrb_value mrb_pancake_Serial(mrb_state *mrb, mrb_value self)
+{
+int	num;
+
+	mrb_get_args(mrb, "i", &num);
+
+	if(num<=0 || num>3){
+		num = 1;
+	}
+
+	SerialNum = num;
+
+	//シリアル通信の初期化をします
 	if(serial[SerialNum] != 0){
 		serial[SerialNum]->end();
 		delay(50);
 		delete serial[SerialNum];
 	}
 	serial[SerialNum] = new CSerial();
-	serial[SerialNum]->begin(115200, SCI_SCI0P2x);
+	serial[SerialNum]->begin(PANCAKE_BAURATE, SCI_SCI0P2x);
 	sci_convert_crlf_ex(serial[SerialNum]->get_handle(), CRLF_NONE, CRLF_NONE);		//バイナリを通せるようにする
-	
+
+	return mrb_nil_value();			//戻り値は無しですよ。
+}
+
+//**************************************************
+// ライブラリを定義します
+//**************************************************
+void pancake_Init(mrb_state *mrb)
+{	
 	PanSend[0] = 0x80;
 
 	struct RClass *pancakeModule = mrb_define_module(mrb, "PanCake");
+	mrb_define_module_function(mrb, pancakeModule, "serial", mrb_pancake_Serial, MRB_ARGS_REQ(1));
 	mrb_define_module_function(mrb, pancakeModule, "clear", mrb_pancake_Clear, MRB_ARGS_REQ(1));
 	mrb_define_module_function(mrb, pancakeModule, "line", mrb_pancake_Line, MRB_ARGS_REQ(5));
 	mrb_define_module_function(mrb, pancakeModule, "circle", mrb_pancake_Circle, MRB_ARGS_REQ(4));

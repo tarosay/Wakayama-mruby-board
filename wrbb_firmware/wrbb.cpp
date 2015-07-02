@@ -135,9 +135,6 @@ void loop()
 {
 	if( RubyRun()==false ){
 		
-		//Serial.print("Error happen.");
-		//終了する
-		//AlertAllStop();
+		fileloader((const char*)ProgVer,MRUBY_VERSION);
 	}
-
 }

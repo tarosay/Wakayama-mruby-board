@@ -1,4 +1,4 @@
-# Wakayama-mruby-board　ARIDA-2.04
+# Wakayama-mruby-board　ARIDA-2.05
 
 　Wakayama.rb のmrubyボードのソースです。
 　何より先ずは「公開」ということで、体裁も整えていないのですが、ソースを公開します。
