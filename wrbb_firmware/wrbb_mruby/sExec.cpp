@@ -146,7 +146,7 @@ bool notFinishFlag = true;
 	}
 	EEP.fclose(fp);
 
-	DEBUG_PRINT("sExec", "START");
+	DEBUG_PRINT("WRBB", "START");
 
 	int arena = mrb_gc_arena_save(mrb);
 
@@ -158,29 +158,28 @@ bool notFinishFlag = true;
 		char *s;
 		int len;
 
-		//mrb_p(mrb, mrb_obj_value(mrb->exc));
 		mrb_value obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
 
 		if (mrb_string_p(obj)) {
 			s = RSTRING_PTR(obj);
 			len = RSTRING_LEN(obj);
 
+			const char *e = "Sys#exit";	//Sys#exitだったら正常終了ということ。
+			int k = 8;		// ↑が8文字なので。
+			int j = 0;
 			for( int i=0; i<len; i++ ){
-				if( *s==0x22 ){
-					s++;
-					break;
+				if(*(s + i) == *(e + j)){
+					j++;
+					if(j == k){ break; }
 				}
-				s++;
+				else{
+					j = 0;
+				}
 			}
 
-			const char *e = "Sys#exit";	//Sys#exitだったら正常終了ということ。
-			for( int i=0; i<8; i++ ){
-
-				if( *(s+i) != *(e+i) ){
-					Serial_print_error(mrb, obj);
-					notFinishFlag = false;
-					break;
-				}
+			if( j<8 ){
+				Serial_print_error(mrb, obj);
+				notFinishFlag = false;
 			}
 		}
 	}

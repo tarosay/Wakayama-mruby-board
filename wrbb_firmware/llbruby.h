@@ -23,11 +23,11 @@
 
 
 #if defined(MRUBY_VER) && ( MRUBY_VER == 100 )
-	#define WRBB_VERSION "ARIDA-1.05 (2015/7/2)"
+	#define WRBB_VERSION "ARIDA-1.06 (2015/7/2)"
 #elif defined(MRUBY_VER) && ( MRUBY_VER == UmeJam )
-	#define WRBB_VERSION "UmeJam-3.05 (2015/7/2)"
+	#define WRBB_VERSION "UmeJam-3.07 (2015/7/3)"
 #else
-	#define WRBB_VERSION "ARIDA-2.06 (2015/7/2)"
+	#define WRBB_VERSION "ARIDA-2.07 (2015/7/3)"
 #endif
 
 //#define    DEBUG                1        // Define if you want to debug
