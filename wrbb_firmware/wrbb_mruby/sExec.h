@@ -7,6 +7,12 @@
  * 
  * http://opensource.org/licenses/mit-license.php
  */
+ 
+#ifndef _SEXEC_H_
+#define _SECEC_H_  1
+
+#include <mruby.h>
+
 #if defined __cplusplus
 extern "C" {
 #endif
@@ -27,4 +33,8 @@ bool RubyRun( void );
 //**************************************************
 //  エラーメッセージ
 //**************************************************
-//void LuaErrorMes( lua_State *LuaLinkP, char* mes, int type );
+bool Serial_print_error(mrb_state *mrb, mrb_value obj);
+
+
+
+#endif // _SEXEC_H_

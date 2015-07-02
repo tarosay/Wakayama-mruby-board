@@ -265,7 +265,7 @@ int fileloader(const char* str0, const char* str1)
 		}
 		else{
 			Serial.println();
-			Serial.println("EEPROM FileWriter Ver. 1.16");
+			Serial.println("EEPROM FileWriter Ver. 1.20");
 			Serial.println(" Command List");
 			Serial.println(" L:List Filename..........>L [ENTER]");
 			Serial.println(" W:Write File.............>W Filename Size [ENTER]");

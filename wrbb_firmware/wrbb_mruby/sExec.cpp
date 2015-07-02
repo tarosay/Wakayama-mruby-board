@@ -10,10 +10,12 @@
 #include <rxduino.h>
 #include <string.h>
 
-//#include <mruby.h>
+#include <mruby.h>
 #include <mruby/irep.h>
 #include <mruby/string.h>
 #include <mruby/variable.h>
+#include <mruby/error.h>
+#include <mruby/array.h>
 
 #include <eepfile.h>
 #include <eeploader.h>
@@ -144,22 +146,23 @@ bool notFinishFlag = true;
 	}
 	EEP.fclose(fp);
 
+	DEBUG_PRINT("sExec", "START");
+
+	int arena = mrb_gc_arena_save(mrb);
+
 	//mrubyを実行します
 	mrb_load_irep( mrb, (const uint8_t *)RubyCode);
 
 	if( mrb->exc ){
-		//mrb_p(mrb, mrb_obj_value(mrb->exc));
-
-		mrb_value obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
 		struct RString *str;
 		char *s;
 		int len;
-		if (mrb_string_p(obj)) {
-			//str = mrb_str_ptr(obj);
-			//s = str->ptr;
-			s = RSTRING_PTR(obj);
 
-			//len = str->len;
+		//mrb_p(mrb, mrb_obj_value(mrb->exc));
+		mrb_value obj = mrb_funcall(mrb, mrb_obj_value(mrb->exc), "inspect", 0);
+
+		if (mrb_string_p(obj)) {
+			s = RSTRING_PTR(obj);
 			len = RSTRING_LEN(obj);
 
 			for( int i=0; i<len; i++ ){
@@ -172,22 +175,36 @@ bool notFinishFlag = true;
 
 			const char *e = "Sys#exit";	//Sys#exitだったら正常終了ということ。
 			for( int i=0; i<8; i++ ){
-				if( *(s+i) != *(e+i) ){
-			
-					notFinishFlag = false;
 
-					//fwrite(str->ptr, len, 1, stdout);	//エラー内容を標準出力する
-					//fwrite(RSTRING_PTR(obj), len, 1, stdout);	//エラー内容を標準出力する
-					Serial.println(RSTRING_PTR(obj));
+				if( *(s+i) != *(e+i) ){
+					Serial_print_error(mrb, obj);
+					notFinishFlag = false;
 					break;
 				}
 			}
-
-			//fwrite(str->ptr, len, 1, stdout);	//標準出力する
 		}
 	}
+	mrb->exc = 0;
+	mrb_gc_arena_restore(mrb, arena);
 
 	mrb_close(mrb);
 
 	return notFinishFlag;
+}
+
+//**************************************************
+// エラーメッセージ
+//**************************************************
+bool Serial_print_error(mrb_state *mrb, mrb_value obj)
+{
+	Serial.println(RSTRING_PTR(obj));
+
+	mrb_value exc = mrb_obj_value(mrb->exc);
+	mrb_value backtrace = mrb_get_backtrace(mrb);
+
+	int j;
+	for (mrb_int n = mrb_ary_len(mrb, backtrace), j = 0; j < n; ++j) {
+		mrb_value v = mrb_ary_ref(mrb, backtrace, j);
+		Serial.println(RSTRING_PTR(v));
+	}
 }
