@@ -1,5 +1,5 @@
 /*
- * 呼び出し実行モジュールプログラム 2015.6.26 Ver.ARIDA
+ * 呼び出し実行モジュールプログラム 2015.7.6
  *
  * Copyright (c) 2015 Minao Yamamoto
  *
@@ -29,14 +29,19 @@
 #include "sI2c.h"
 #include "sServo.h"
 
-#if defined(MRUBY_VER) && ( MRUBY_VER == 100 )
+#if defined(MRUBY_VER) && ( MRUBY_VER == VER100 )
 #else
 	#include "sRtc.h"
 #endif
 
-#if defined(MRUBY_VER) && ( MRUBY_VER == UmeJam )
+#if defined(MRUBY_VER) && ( MRUBY_VER == UMEJAM || MRUBY_VER == SAKURAJAM )
 	#include "sPanCake.h"
 #endif
+
+#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM )
+	#include "sSdCard.h"
+#endif
+
 
 //バージョンのセット
 volatile char	ProgVer[] = {WRBB_VERSION};
@@ -69,15 +74,18 @@ bool notFinishFlag = true;
 	mem_Init(mrb);		//ファイル関連メソッドの設定
 	i2c_Init(mrb);		//I2C関連メソッドの設定
 	servo_Init(mrb);	//サーボ関連メソッドの設定
-#if defined(MRUBY_VER) && ( MRUBY_VER == 100 )
+#if defined(MRUBY_VER) && ( MRUBY_VER == VER100 )
 #else
 	rtc_Init(mrb);		//RTC関連メソッドの設定
 #endif
 
-#if defined(MRUBY_VER) && ( MRUBY_VER == UmeJam )
+#if defined(MRUBY_VER) && ( MRUBY_VER == UMEJAM || MRUBY_VER == SAKURAJAM )
 	pancake_Init(mrb);		//PanCake関連メソッドの設定
 #endif
 
+#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM )
+	sdcard_Init(mrb);		//SDカード関連メソッドの設定
+#endif
 
 
 
@@ -101,13 +109,13 @@ bool notFinishFlag = true;
 	}
 
 	//mrbファイルチェックを行う
-	int mrbFlag = 0;
+	//int mrbFlag = 0;
 	char he[8];
 	for( int i=0; i<8; i++ ){	he[i] = EEP.fread(fp);	}
 
 	if( !(he[0]=='R' && he[1]=='I'
 	&& he[2]=='T' && he[3]=='E'
-#if defined(MRUBY_VER) && ( MRUBY_VER == 100 )
+#if defined(MRUBY_VER) && ( MRUBY_VER == VER100 )
 	&& he[4]=='0' && he[5]=='0'
 	&& he[6]=='0' && he[7]=='2'
 #else
@@ -154,7 +162,7 @@ bool notFinishFlag = true;
 	mrb_load_irep( mrb, (const uint8_t *)RubyCode);
 
 	if( mrb->exc ){
-		struct RString *str;
+		//struct RString *str;
 		char *s;
 		int len;
 
@@ -194,15 +202,15 @@ bool notFinishFlag = true;
 //**************************************************
 // エラーメッセージ
 //**************************************************
-bool Serial_print_error(mrb_state *mrb, mrb_value obj)
+void Serial_print_error(mrb_state *mrb, mrb_value obj)
 {
 	Serial.println(RSTRING_PTR(obj));
 
-	mrb_value exc = mrb_obj_value(mrb->exc);
+	//mrb_value exc = mrb_obj_value(mrb->exc);
 	mrb_value backtrace = mrb_get_backtrace(mrb);
 
-	int j;
-	for (mrb_int n = mrb_ary_len(mrb, backtrace), j = 0; j < n; ++j) {
+	int j = 0;
+	for (mrb_int n = mrb_ary_len(mrb, backtrace); j < n; ++j) {
 		mrb_value v = mrb_ary_ref(mrb, backtrace, j);
 		Serial.println(RSTRING_PTR(v));
 	}

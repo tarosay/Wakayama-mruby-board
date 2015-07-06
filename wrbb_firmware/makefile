@@ -7,6 +7,14 @@ LNK = $(CCPATH)rx-elf-ld
 CNV = $(CCPATH)rx-elf-objcopy --srec-forceS3 --srec-len 32 -O srec
 CNVBIN = $(CCPATH)rx-elf-objcopy -O binary
 DMP = $(CCPATH)rx-elf-objdump
+#OBJS =	common/intvect.o common/lowlevel.o \
+#		./wrbb_eepfile/eepfile.o ./wrbb_eepfile/eeploader.o \
+#		./wrbb_mruby/sExec.o ./wrbb_mruby/sKernel.o ./wrbb_mruby/sSys.o ./wrbb_mruby/sSerial.o \
+#		./wrbb_mruby/sMem.o ./wrbb_mruby/sI2c.o ./wrbb_mruby/sServo.o ./wrbb_mruby/sRtc.o \
+#		./wrbb_mruby/sPanCake.o \
+#		./wrbb_mruby/sSdCard.o \
+#		./wrbb_mruby/libmruby.a \
+#		$(TARGET).o 
 OBJS =	common/intvect.o common/lowlevel.o \
 		./wrbb_eepfile/eepfile.o ./wrbb_eepfile/eeploader.o \
 		./wrbb_mruby/sExec.o ./wrbb_mruby/sKernel.o ./wrbb_mruby/sSys.o ./wrbb_mruby/sSerial.o \
@@ -18,6 +26,7 @@ RXDUINO_STANDARD_LIBS = -lethernet -ltkdnip -lspi -lservo -lliquidcrystal -lsdmm
 LFLAGS = -Llib/gcc -Llib $(RXDUINO_STANDARD_LIBS) -lrxduino -lstdc++ -lsupc++ -lc -lsim -lgcc -lm -ltkdnhal -nostartfiles
 MAKEFILE = makefile
 ROMSCRIPT=common/rx63n_rom_standalone.ld
+GADGETSCRIPT=common/gr_sakura_test_Release_auto.gsi
 STARTUP=lib/start.o
 GSTARTUP=
 make = make --no-print-directory 
@@ -27,6 +36,11 @@ all:	rom
 rom:	$(OBJS) $(STARTUP) $(MAKEFILE) $(ROMSCRIPT)
 	$(LNK) -Map $(TARGET).map $(STARTUP) $(OBJS) -T $(ROMSCRIPT) $(LFLAGS) -o $(TARGET).elf 
 	$(CNV) $(TARGET).elf  $(TARGET).mot
+
+gadget:	$(OBJS) $(GSTARTUP) $(MAKEFILE) $(ROMSCRIPT)
+	$(LNK) -Map $(TARGET).map $(GSTARTUP) $(OBJS) -T $(GADGETSCRIPT) $(LFLAGS) -o $(TARGET).elf 
+	$(CNV) $(TARGET).elf  $(TARGET).mot
+	$(CNVBIN) $(TARGET).elf  $(TARGET).bin
 
 .c.o:
 	$(CC) -Wall -O2 -c $< -o $@

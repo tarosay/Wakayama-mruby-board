@@ -153,7 +153,7 @@ int fileloader(const char* str0, const char* str1)
 
 		//コマンド待ち
 		Serial.println();
-		Serial.print("WAKAYAMA.RB Board V.");
+		Serial.print("WAKAYAMA.RB Board Ver.");
 		Serial.print(str0);
 		if(str1[0] != 0){
 			Serial.print(", mruby ");

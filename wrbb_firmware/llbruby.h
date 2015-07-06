@@ -17,15 +17,27 @@
 #define RUBY_CODE_SIZE (1024 * 4)		//4kBまで実行可能とする
 
 //バージョンを定義します
-//#define MRUBY_VER	100
-#define MRUBY_VER	110
-//#define MRUBY_VER	UmeJam
+#define VER100	100
+#define VER110	110
+#define UMEJAM	200
+#define SAKURAJAM	210
+
+//#define MRUBY_VER	VER100
+#define MRUBY_VER	VER110
+//#define MRUBY_VER	UMEJAM
+//#define MRUBY_VER	SAKURAJAM
 
 
-#if defined(MRUBY_VER) && ( MRUBY_VER == 100 )
-	#define WRBB_VERSION "ARIDA-1.06 (2015/7/2)"
-#elif defined(MRUBY_VER) && ( MRUBY_VER == UmeJam )
-	#define WRBB_VERSION "UmeJam-3.07 (2015/7/3)"
+#if defined(MRUBY_VER)
+	#if MRUBY_VER == VER100
+		#define WRBB_VERSION "ARIDA-1.07 (2015/7/3)"
+	#elif MRUBY_VER == VER110
+		#define WRBB_VERSION "ARIDA-2.08 (2015/7/7)"
+	#elif MRUBY_VER == UMEJAM
+		#define WRBB_VERSION "UmeJam-3.08 (2015/7/7)"
+	#elif MRUBY_VER == SAKURAJAM
+		#define WRBB_VERSION "SakuraJam-3.08 (2015/7/7)"
+	#endif
 #else
 	#define WRBB_VERSION "ARIDA-2.07 (2015/7/3)"
 #endif
@@ -66,6 +78,7 @@
 #define RB_PIN19	23
 
 #define RB_LED	PIN_LED0
+
 
 #endif // _LLBRUBY_H_
 

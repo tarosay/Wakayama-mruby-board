@@ -24,7 +24,12 @@
 //**************************************************
 int wrb2sakura(int pin)
 {
-int ret = 0;
+#if defined(MRUBY_VER) && MRUBY_VER == SAKURAJAM
+
+	return pin;
+
+#else
+	int ret = 0;
 
 	switch(pin){
 	case 0:
@@ -90,6 +95,7 @@ int ret = 0;
 	}
 
 	return ret;
+#endif
 }
 
 //**************************************************

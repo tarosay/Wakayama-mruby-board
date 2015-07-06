@@ -17,6 +17,7 @@
 #include "sKernel.h"
 
 #define  PANCAKE_BAURATE	115200
+#define  PANCAKE_WAIT		4
 
 extern CSerial *serial[];
 
@@ -38,6 +39,7 @@ int	cn;
 	PanSend[2] = 0x0;
 	PanSend[3] = (unsigned char)cn;
 	
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -67,6 +69,7 @@ int	cn;
 	PanSend[6] = (unsigned char)y2;
 	PanSend[7] = (unsigned char)cn;
 	
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -95,6 +98,7 @@ int	cn;
 	PanSend[5] = (unsigned char)ra;
 	PanSend[6] = (unsigned char)cn;
 	
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -146,6 +150,7 @@ mrb_value text;
 		PanSend[6 + i] = hex2int(s[i*2]) * 16 + hex2int(s[i*2 + 1]);
 	}
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -179,6 +184,7 @@ mrb_value text;
 		PanSend[6 + i] = hex2int(s[i*2]) * 16 + hex2int(s[i*2 + 1]);
 	}
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -199,6 +205,7 @@ int	num;
 	PanSend[2] = 0x4;
 	PanSend[3] = (unsigned char)num;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -219,6 +226,7 @@ int	sw;
 	PanSend[2] = 0x5;
 	PanSend[3] = (unsigned char)sw;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -250,6 +258,7 @@ int s0,s1,s2,s3;
 	PanSend[9] = (unsigned char)o3;
 	PanSend[10] = (unsigned char)s3;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -276,6 +285,7 @@ int	cn, on, sn;
 	PanSend[4] = (unsigned char)on;
 	PanSend[5] = (unsigned char)sn;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -290,6 +300,7 @@ mrb_value mrb_pancake_Reset(mrb_state *mrb, mrb_value self)
 	PanSend[1] = 0x3;
 	PanSend[2] = 0xD;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -310,6 +321,7 @@ int	pf;
 	PanSend[2] = 0xF;
 	PanSend[3] = (unsigned char)pf;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -332,6 +344,7 @@ int	num;
 	PanSend[2] = 0x6;
 	PanSend[3] = (unsigned char)num;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -340,7 +353,7 @@ int	num;
 //**************************************************
 // スプライトを作る: Sprite.create
 //  Sprite.create(sn, si)
-//  sn: スプライト番号 0〜15
+//  sn: スプライト番号 0〜15, FD, FE
 //  si: 組み込みスプライト画像番号
 //      消すのは FF
 //**************************************************
@@ -355,6 +368,7 @@ int sn, si;
 	PanSend[3] = (unsigned char)sn;
 	PanSend[4] = (unsigned char)si;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -363,7 +377,7 @@ int sn, si;
 //**************************************************
 // スプライトの移動: Sprite.move
 //  Sprite.move(sn, px,py)
-//  sn: スプライト番号 0〜15
+//  sn: スプライト番号 0〜15, FD, FE
 //  px,py: 画面座標
 //**************************************************
 mrb_value mrb_pancake_Move(mrb_state *mrb, mrb_value self)
@@ -378,6 +392,7 @@ int sn, px, py;
 	PanSend[4] = (unsigned char)px;
 	PanSend[5] = (unsigned char)py;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -398,6 +413,7 @@ int sw;
 	PanSend[2] = 0xC;
 	PanSend[3] = (unsigned char)sw;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -432,6 +448,7 @@ mrb_value text;
 	}
 	PanSend[1] = 6 + len;
 
+	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
 
 	return mrb_nil_value();			//戻り値は無しですよ。
@@ -468,6 +485,83 @@ int	num;
 }
 
 //**************************************************
+// スプライトの左右反転: Sprite.flip
+//  Sprite.flip(sn, fs)
+//  sn: スプライト番号 0〜15, FD, FE
+//  fs: ON/OFF[01/00]
+//**************************************************
+mrb_value mrb_pancake_Flip(mrb_state *mrb, mrb_value self)
+{
+int sn, fs;
+
+	mrb_get_args(mrb, "ii", &sn, &fs);
+
+	PanSend[1] = 0x5;
+	PanSend[2] = 0x10;
+	PanSend[3] = (unsigned char)sn;
+	PanSend[4] = (unsigned char)fs;
+
+	delay(PANCAKE_WAIT);
+	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
+
+	return mrb_nil_value();			//戻り値は無しですよ。
+}
+
+//**************************************************
+// スプライトの左右反転: Sprite.rotate
+//  Sprite.rotate(sn, ra)
+//  sn: スプライト番号 0〜15, FD, FE
+//  ra: 角度[0:0°,1:-90°,2:180°,3:90°]
+//**************************************************
+mrb_value mrb_pancake_Rotate(mrb_state *mrb, mrb_value self)
+{
+int sn, ra;
+
+	mrb_get_args(mrb, "ii", &sn, &ra);
+
+	PanSend[1] = 0x5;
+	PanSend[2] = 0x11;
+	PanSend[3] = (unsigned char)sn;
+	PanSend[4] = (unsigned char)ra;
+
+	delay(PANCAKE_WAIT);
+	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
+
+	return mrb_nil_value();			//戻り値は無しですよ。
+}
+
+//**************************************************
+// 画面に8x8の絵を描く: PanCake.user
+//  PanCake.user(sn, tc, string)
+//  sn: 番号 FD, FE
+//  tc: 透明色
+//  string: 16進数の文字列が64個(色の番号です)
+//**************************************************
+mrb_value mrb_pancake_User(mrb_state *mrb, mrb_value self)
+{
+int	sn, tc;
+mrb_value text;
+
+	mrb_get_args(mrb, "iiS", &sn, &tc, &text);
+
+	PanSend[1] = 0x25;
+	PanSend[2] = 0x12;
+	PanSend[3] = (unsigned char)sn;
+	PanSend[4] = (unsigned char)tc;
+
+	char *s = RSTRING_PTR(text);
+
+	for(int i=0; i<32; i++){
+		PanSend[5 + i] = hex2int(s[i*2]) * 16 + hex2int(s[i*2 + 1]);
+	}
+
+	delay(PANCAKE_WAIT);
+	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
+
+	return mrb_nil_value();			//戻り値は無しですよ。
+}
+
+//**************************************************
 // ライブラリを定義します
 //**************************************************
 void pancake_Init(mrb_state *mrb)
@@ -488,12 +582,13 @@ void pancake_Init(mrb_state *mrb)
 	mrb_define_module_function(mrb, pancakeModule, "reset", mrb_pancake_Reset, MRB_ARGS_NONE());
 	mrb_define_module_function(mrb, pancakeModule, "out", mrb_pancake_Out, MRB_ARGS_REQ(1));
 
-
 	struct RClass *spriteModule = mrb_define_module(mrb, "Sprite");
 	mrb_define_module_function(mrb, spriteModule, "start", mrb_pancake_Start, MRB_ARGS_REQ(1));
 	mrb_define_module_function(mrb, spriteModule, "create", mrb_pancake_Create, MRB_ARGS_REQ(2));
 	mrb_define_module_function(mrb, spriteModule, "move", mrb_pancake_Move, MRB_ARGS_REQ(3));
-
+	mrb_define_module_function(mrb, spriteModule, "flip", mrb_pancake_Flip, MRB_ARGS_REQ(2));
+	mrb_define_module_function(mrb, spriteModule, "rotate", mrb_pancake_Rotate, MRB_ARGS_REQ(2));
+	mrb_define_module_function(mrb, spriteModule, "user", mrb_pancake_User, MRB_ARGS_REQ(3));
 
 	struct RClass *musicModule = mrb_define_module(mrb, "Music");
 	mrb_define_module_function(mrb, musicModule, "score", mrb_pancake_Score, MRB_ARGS_REQ(4));

@@ -1,5 +1,5 @@
 /*
- * 呼び出し実行モジュールプログラム 2015.6.26 Ver.ARIDA
+ * 呼び出し実行モジュールプログラム
  *
  * Copyright (c) 2015 Minao Yamamoto
  *
@@ -17,9 +17,6 @@
 extern "C" {
 #endif
 
-//#include "lua/lua.h"
-//#include "lua/lualib.h"
-//#include "lua/lauxlib.h"
 
 #if defined __cplusplus
 }
@@ -33,7 +30,7 @@ bool RubyRun( void );
 //**************************************************
 //  エラーメッセージ
 //**************************************************
-bool Serial_print_error(mrb_state *mrb, mrb_value obj);
+void Serial_print_error(mrb_state *mrb, mrb_value obj);
 
 
 
