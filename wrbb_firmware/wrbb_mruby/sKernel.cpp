@@ -24,7 +24,7 @@
 //**************************************************
 int wrb2sakura(int pin)
 {
-#if defined(MRUBY_VER) && MRUBY_VER == SAKURAJAM
+#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM || MRUBY_VER == SAKURUBY)
 
 	return pin;
 

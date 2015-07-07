@@ -22,8 +22,8 @@
 Servo *servo[ATTACH_MAX];
 
 //**************************************************
-// サーボ出力を任意のピンに割り当てます: Srv.attach
-// Srv.attach(ch, pin[,min,max])
+// サーボ出力を任意のピンに割り当てます: Servo.attach
+// Servo.attach(ch, pin[,min,max])
 //	ch: サーボのチャネル 0～9まで指定できます
 //  pin: 割り当てるピン番号
 //  min: サーボの角度が0度のときのパルス幅(マイクロ秒)。デフォルトは544
@@ -66,8 +66,8 @@ int max;
 }
 
 //**************************************************
-// サーボの角度をセットします: Srv.write
-// Srv.write(ch,angle)
+// サーボの角度をセットします: Servo.write
+// Servo.write(ch,angle)
 //	ch: サーボのチャネル 0～9まで指定できます
 //  angle: 角度 0～180
 //**************************************************
@@ -94,8 +94,8 @@ mrb_value mrb_servo_write(mrb_state *mrb, mrb_value self)
 }
 
 //**************************************************
-// サーボモータにus単位で角度を指定する: Srv.us
-// Srv.us(ch,us)
+// サーボモータにus単位で角度を指定する: Servo.us
+// Servo.us(ch,us)
 //	ch: サーボのチャネル 0～9まで指定できます
 //  us: 出力したいパルスの幅 1～19999, 0で出力 OFF
 //   サーボモータに与えられるパルスは20ms周期で、1周期中のHighの時間を直接指定する。
@@ -122,8 +122,8 @@ mrb_value mrb_servo_us(mrb_state *mrb, mrb_value self)
 }
 
 //**************************************************
-// 最後に設定された角度を読み出す: Srv.read
-// Srv.read(ch)
+// 最後に設定された角度を読み出す: Servo.read
+// Servo.read(ch)
 //	ch: サーボのチャネル 0～9まで指定できます
 // 戻り値
 //  マイクロ秒単位 us(ch) で与えた値は読みとれない
@@ -149,8 +149,8 @@ mrb_value mrb_servo_read(mrb_state *mrb, mrb_value self)
 }
 
 //**************************************************
-// ピンにサーボが割り当てられているかを確認する: Srv.attached
-// Srv.attached(ch)
+// ピンにサーボが割り当てられているかを確認する: Servo.attached
+// Servo.attached(ch)
 //	ch: サーボのチャネル 0～9まで指定できます
 // 戻り値
 //  1: 割り当てられている
@@ -179,8 +179,8 @@ mrb_value mrb_servo_attached(mrb_state *mrb, mrb_value self)
 }
 
 //**************************************************
-// サーボの動作を止め、割り込みを禁止する: Srv.detach
-// Srv.detach(ch)
+// サーボの動作を止め、割り込みを禁止する: Servo.detach
+// Servo.detach(ch)
 //	ch: サーボのチャネル 0～9まで指定できます
 //**************************************************
 mrb_value mrb_servo_detach(mrb_state *mrb, mrb_value self)

@@ -26,7 +26,7 @@ extern char RubyFilename[];
 
 //**************************************************
 // 終了させます
-//	exit()
+//	System.exit()
 //	エラー値がもどり、即終了
 //**************************************************
 mrb_value mrb_system_exit(mrb_state *mrb, mrb_value self)
@@ -39,7 +39,7 @@ mrb_value mrb_system_exit(mrb_state *mrb, mrb_value self)
 
 //**************************************************
 // 次に実行するスクリプトファイルをVmFilenameにセットします。
-// setRun( filename )
+// System.setRun( filename )
 //**************************************************
 mrb_value mrb_system_setrun(mrb_state *mrb, mrb_value self)
 {
@@ -55,7 +55,7 @@ mrb_value text;
 
 //**************************************************
 // システムのバージョンを取得します
-// Sys.version([R])
+// System.version([R])
 // 引数があればmrubyのバーションを返す
 //**************************************************
 mrb_value mrb_system_version(mrb_state *mrb, mrb_value self)
@@ -73,7 +73,7 @@ int tmp;
 
 //**************************************************
 //フラッシュメモリに書き込みます
-// Sys.push(address, buf, length)
+// System.push(address, buf, length)
 //	address: 書き込み開始アドレス(0x0000～0x00ff)
 //  buf: 書き込むデータ
 //  length: 書き込むサイズ
@@ -110,7 +110,7 @@ char	*str;
 
 //**************************************************
 //フラッシュメモリから読み出します
-// Sys.pop(address, length)
+// System.pop(address, length)
 //	address: 読み込みアドレス(0x0000～0x00ff)
 //  length: 読み込みサイズ(MAX 32バイト)
 // 戻り値
@@ -142,12 +142,13 @@ int		len;
 
 //**************************************************
 // ファイルローダーを呼び出します
-// Sys.fileload()
+// System.fileload()
 //**************************************************
 mrb_value mrb_system_fileload(mrb_state *mrb, mrb_value self)
 {
 	//ファイルローダーの呼び出し
 	if(fileloader((const char*)ProgVer,MRUBY_VERSION) == 1){
+		mrb_full_gc(mrb);	//強制GCを入れる
 		//強制終了
 		mrb_raise(mrb, mrb_class_get(mrb, "Sys#exit Called"), "Normal Completion");
 	}

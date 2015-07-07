@@ -19,27 +19,32 @@
 //バージョンを定義します
 #define VER100	100
 #define VER110	110
-#define UMEJAM	200
-#define SAKURAJAM	210
+#define UMEJAM	1000
+#define SAKURUBY	1001
+#define SAKURAJAM	1002
 
 //#define MRUBY_VER	VER100
 #define MRUBY_VER	VER110
 //#define MRUBY_VER	UMEJAM
+//#define MRUBY_VER	SAKURUBY
 //#define MRUBY_VER	SAKURAJAM
 
+#define MASTER	"ARIDA-2.09 (2015/7/8)"
 
 #if defined(MRUBY_VER)
 	#if MRUBY_VER == VER100
 		#define WRBB_VERSION "ARIDA-1.07 (2015/7/3)"
 	#elif MRUBY_VER == VER110
-		#define WRBB_VERSION "ARIDA-2.08 (2015/7/7)"
+		#define WRBB_VERSION MASTER
 	#elif MRUBY_VER == UMEJAM
 		#define WRBB_VERSION "UmeJam-3.08 (2015/7/7)"
 	#elif MRUBY_VER == SAKURAJAM
 		#define WRBB_VERSION "SakuraJam-3.08 (2015/7/7)"
+	#elif MRUBY_VER == SAKURUBY
+		#define WRBB_VERSION "SakuRuby-2.08 (2015/7/8)"
 	#endif
 #else
-	#define WRBB_VERSION "ARIDA-2.07 (2015/7/3)"
+	#define WRBB_VERSION MASTER
 #endif
 
 //#define    DEBUG                1        // Define if you want to debug

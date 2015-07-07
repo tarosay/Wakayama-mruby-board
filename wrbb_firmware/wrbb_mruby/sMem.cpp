@@ -21,8 +21,8 @@ FILEEEP Fpj1;
 FILEEEP *Fp1 = &Fpj1;			//コマンド用
 
 //**************************************************
-// openしたファイルから1バイト読み込みます: Mem.read
-//	Mem.read( number )
+// openしたファイルから1バイト読み込みます: MemFile.read
+//	MemFile.read( number )
 //	number: ファイル番号 0 または 1
 // 戻り値
 //	0x00～0xFFが返る。ファイルの最後だったら-1が返る。
@@ -45,8 +45,8 @@ int	num;
 }
 
 //**************************************************
-// openしたファイルバイナリデータを書き込む: Mem.write
-//	Mem.write( number, buf, len )
+// openしたファイルバイナリデータを書き込む: MemFile.write
+//	MemFile.write( number, buf, len )
 //	number: ファイル番号 0 または 1
 //	buf: 書き込むデータ
 //	len: 書き込むデータサイズ
@@ -77,8 +77,8 @@ char	*str;
 }
 
 //**************************************************
-// ファイルをオープンします: Mem.open
-//	Mem.open( number, filename[, mode] )
+// ファイルをオープンします: MemFile.open
+//	MemFile.open( number, filename[, mode] )
 //	number: ファイル番号 0 または 1
 //	filename: ファイル名(8.3形式)
 //	mode: 0:Read, 1:Append, 2:New Create
@@ -141,8 +141,8 @@ char	*str;
 
 
 //**************************************************
-// ファイルをクローズします: Mem.close( number )
-//	Mem.close( number )
+// ファイルをクローズします: MemFile.close( number )
+//	MemFile.close( number )
 //	number: ファイル番号 0 または 1
 //**************************************************
 mrb_value mrb_mem_close(mrb_state *mrb, mrb_value self)
@@ -162,8 +162,8 @@ int	num;
 }
 
 //**************************************************
-// openしたファイルの読み出し位置を移動する: Mem.seek
-//	Mem.seek( number, byte )
+// openしたファイルの読み出し位置を移動する: MemFile.seek
+//	MemFile.seek( number, byte )
 //	number: ファイル番号 0 または 1
 //	byte: seekするバイト数(-1)でファイルの最後に移動する
 // 戻り値

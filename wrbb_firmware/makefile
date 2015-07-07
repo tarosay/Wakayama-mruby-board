@@ -7,18 +7,14 @@ LNK = $(CCPATH)rx-elf-ld
 CNV = $(CCPATH)rx-elf-objcopy --srec-forceS3 --srec-len 32 -O srec
 CNVBIN = $(CCPATH)rx-elf-objcopy -O binary
 DMP = $(CCPATH)rx-elf-objdump
-#OBJS =	common/intvect.o common/lowlevel.o \
-#		./wrbb_eepfile/eepfile.o ./wrbb_eepfile/eeploader.o \
-#		./wrbb_mruby/sExec.o ./wrbb_mruby/sKernel.o ./wrbb_mruby/sSys.o ./wrbb_mruby/sSerial.o \
-#		./wrbb_mruby/sMem.o ./wrbb_mruby/sI2c.o ./wrbb_mruby/sServo.o ./wrbb_mruby/sRtc.o \
-#		./wrbb_mruby/sPanCake.o \
-#		./wrbb_mruby/sSdCard.o \
-#		./wrbb_mruby/libmruby.a \
-#		$(TARGET).o 
+#PANCAKE = ./wrbb_mruby/sPanCake.o 
+#SDCARD = ./wrbb_mruby/sSdCard.o 
+RTC = ./wrbb_mruby/sRtc.o 
 OBJS =	common/intvect.o common/lowlevel.o \
 		./wrbb_eepfile/eepfile.o ./wrbb_eepfile/eeploader.o \
 		./wrbb_mruby/sExec.o ./wrbb_mruby/sKernel.o ./wrbb_mruby/sSys.o ./wrbb_mruby/sSerial.o \
-		./wrbb_mruby/sMem.o ./wrbb_mruby/sI2c.o ./wrbb_mruby/sServo.o ./wrbb_mruby/sRtc.o \
+		./wrbb_mruby/sMem.o ./wrbb_mruby/sI2c.o ./wrbb_mruby/sServo.o \
+		$(RTC) $(PANCAKE) $(SDCARD) \
 		./wrbb_mruby/libmruby.a \
 		$(TARGET).o 
 
