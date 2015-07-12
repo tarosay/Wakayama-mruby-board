@@ -223,6 +223,30 @@ int fileloader(const char* str0, const char* str1)
 				writefile(fname, size);
 			}
 		}
+		else if(Arry[0] == 'X'){
+			if(strlen(Arry) > 3){
+				//スペースを0に変えて、ポインタを取得
+				char *fs[4];
+				int j = 0;
+				int len = strlen(Arry);
+				for(int i=0; i<len; i++){
+					if(Arry[i] == ' '){
+						Arry[i] = 0;
+						fs[j] = &Arry[i+1];
+						j++;
+						if(j>2){	break;	}
+					}
+				}
+				strcpy(fname, fs[0]);
+				size = atoi(fs[1]);
+				writefile(fname, size);
+
+				strcpy( (char*)RubyFilename, fname );
+				//強制終了フラグを立てる
+				StopFlg = true;
+				break;
+			}
+		}
 		else if(Arry[0] == 'E'){
 			//ファームウェア書き込み待ちにする
 			system_reboot( REBOOT_USERAPP );	//リセット後にユーザアプリを起動する
@@ -265,7 +289,7 @@ int fileloader(const char* str0, const char* str1)
 		}
 		else{
 			Serial.println();
-			Serial.println("EEPROM FileWriter Ver. 1.20");
+			Serial.println("EEPROM FileWriter Ver. 1.30");
 			Serial.println(" Command List");
 			Serial.println(" L:List Filename..........>L [ENTER]");
 			Serial.println(" W:Write File.............>W Filename Size [ENTER]");
@@ -273,6 +297,7 @@ int fileloader(const char* str0, const char* str1)
 			Serial.println(" Z:Delete All Files.......>Z [ENTER]");
 			Serial.println(" A:List FAT...............>A [ENTER]");
 			Serial.println(" R:Set Run File...........>R Filename [ENTER]");
+			Serial.println(" X:Execte File............>X Filename [ENTER]");
 			Serial.println(" S:List Sector............>S Number [ENTER]");
 			Serial.println(" Q:Quit...................>Q [ENTER]");
 			Serial.println(" E:System Reset...........>E [ENTER]");

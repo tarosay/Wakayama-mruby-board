@@ -353,7 +353,7 @@ int	num;
 //**************************************************
 // スプライトを作る: Sprite.create
 //  Sprite.create(sn, si)
-//  sn: スプライト番号 0〜15, FD, FE
+//  sn: スプライト番号 0〜15
 //  si: 組み込みスプライト画像番号
 //      消すのは FF
 //**************************************************
@@ -377,7 +377,7 @@ int sn, si;
 //**************************************************
 // スプライトの移動: Sprite.move
 //  Sprite.move(sn, px,py)
-//  sn: スプライト番号 0〜15, FD, FE
+//  sn: スプライト番号 0〜15
 //  px,py: 画面座標
 //**************************************************
 mrb_value mrb_pancake_Move(mrb_state *mrb, mrb_value self)
@@ -420,6 +420,37 @@ int sw;
 }
 
 //**************************************************
+// C D E F G A B を0x0 ～ 0xBに置き換えます
+// C  D  E  F  G  A  B
+// 0  2  4  5  7  9  B
+//**************************************************
+int score2int(char s)
+{	
+	if('c' == s || s == 'C'){
+		return 0;
+	}
+	else if('d' == s || s == 'D'){
+		return 2;
+	}
+	else if('e' == s || s == 'E'){
+		return 4;
+	}
+	else if('f' == s || s == 'F'){
+		return 5;
+	}
+	else if('g' == s || s == 'G'){
+		return 7;
+	}
+	else if('a' == s || s == 'A'){
+		return 9;
+	}
+	else if('b' == s || s == 'B'){
+		return 11;
+	}
+	return -1;
+}
+
+//**************************************************
 // MMLをサウンドchに登録する: Music.score
 //  Music.score(ch, pn, tt, string)
 //  ch: チャンネル(00〜03)
@@ -443,10 +474,64 @@ mrb_value text;
 	char *s = RSTRING_PTR(text);
 	int len = RSTRING_LEN(text);
 
+	int oct = 0x40;
+	int sc = 0;
+	int j = 0;
 	for(int i=0; i<len; i++){
-		PanSend[6 + i] = s[i];
+		
+		sc = score2int( s[i] );
+		
+		if(s[i] == 'n' || s[i] == 'N'){
+			PanSend[6 + j] = oct + 0x0e;
+			j++;
+		}
+		else if(s[i] == 'r' || s[i] == 'R'){
+			PanSend[6 + j] = oct + 0x0f;
+			j++;
+		}
+		else if(s[i] == '$'){
+			PanSend[6 + j] = 0xfe;
+			j++;
+		}
+		else if(s[i] == '~'){
+			PanSend[6 + j] = 0xfd;
+			j++;
+		}
+		else if(s[i] == '>'){
+			oct += 0x10;
+		}
+		else if(s[i] == '<'){
+			oct -= 0x10;
+		}
+		else if(s[i] == '+'){
+			if(j > 0){
+				if((PanSend[6 + j - 1] & 0xf) == 0xb){
+					PanSend[6 + j - 1] = oct + 1 + 0x0;
+				}
+				else{
+					PanSend[6 + j - 1] ++;
+				}
+			}
+		}
+		else if(s[i] == '-'){
+			if(j > 0){
+				if((PanSend[6 + j - 1] & 0xf) == 0x0){
+					PanSend[6 + j - 1] = oct - 1 + 0xb;
+				}
+				else{
+					PanSend[6 + j - 1] --;
+				}
+			}
+		}
+		else if(sc >= 0 && sc <= 0xb){
+			PanSend[6 + j] = oct + sc;
+			j++;
+		}
 	}
-	PanSend[1] = 6 + len;
+	PanSend[6 + j] = 0xff;
+	j++;
+
+	PanSend[1] = 6 + j;
 
 	delay(PANCAKE_WAIT);
 	serial[SerialNum]->write( (const unsigned char *)PanSend, PanSend[1]);
@@ -487,7 +572,7 @@ int	num;
 //**************************************************
 // スプライトの左右反転: Sprite.flip
 //  Sprite.flip(sn, fs)
-//  sn: スプライト番号 0〜15, FD, FE
+//  sn: スプライト番号 0〜15
 //  fs: ON/OFF[01/00]
 //**************************************************
 mrb_value mrb_pancake_Flip(mrb_state *mrb, mrb_value self)
@@ -508,9 +593,9 @@ int sn, fs;
 }
 
 //**************************************************
-// スプライトの左右反転: Sprite.rotate
+// スプライトの回転: Sprite.rotate
 //  Sprite.rotate(sn, ra)
-//  sn: スプライト番号 0〜15, FD, FE
+//  sn: スプライト番号 0〜15
 //  ra: 角度[0:0°,1:-90°,2:180°,3:90°]
 //**************************************************
 mrb_value mrb_pancake_Rotate(mrb_state *mrb, mrb_value self)
@@ -531,9 +616,9 @@ int sn, ra;
 }
 
 //**************************************************
-// 画面に8x8の絵を描く: PanCake.user
-//  PanCake.user(sn, tc, string)
-//  sn: 番号 FD, FE
+// スプライト用8x8画像の定義: Sprite.user
+//  Sprite.user(dn, tc, string)
+//  dn: スプライトの定義番号 FD か FE
 //  tc: 透明色
 //  string: 16進数の文字列が64個(色の番号です)
 //**************************************************

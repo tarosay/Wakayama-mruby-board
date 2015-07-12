@@ -29,7 +29,7 @@
 //#define MRUBY_VER	SAKURUBY
 //#define MRUBY_VER	SAKURAJAM
 
-#define MASTER	"ARIDA-2.09 (2015/7/8)"
+#define MASTER	"ARIDA-2.10 (2015/7/12)"
 
 #if defined(MRUBY_VER)
 	#if MRUBY_VER == VER100
@@ -37,9 +37,9 @@
 	#elif MRUBY_VER == VER110
 		#define WRBB_VERSION MASTER
 	#elif MRUBY_VER == UMEJAM
-		#define WRBB_VERSION "UmeJam-3.08 (2015/7/7)"
+		#define WRBB_VERSION "UmeJam-3.09 (2015/7/8)"
 	#elif MRUBY_VER == SAKURAJAM
-		#define WRBB_VERSION "SakuraJam-3.08 (2015/7/7)"
+		#define WRBB_VERSION "SakuraJam-3.10 (2015/7/9)"
 	#elif MRUBY_VER == SAKURUBY
 		#define WRBB_VERSION "SakuRuby-2.08 (2015/7/8)"
 	#endif
