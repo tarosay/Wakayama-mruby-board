@@ -22,14 +22,17 @@
 #define UMEJAM	1000
 #define SAKURUBY	1001
 #define SAKURAJAM	1002
+#define SDBT	1003
+
 
 //#define MRUBY_VER	VER100
 #define MRUBY_VER	VER110
 //#define MRUBY_VER	UMEJAM
 //#define MRUBY_VER	SAKURUBY
 //#define MRUBY_VER	SAKURAJAM
+//#define MRUBY_VER	SDBT
 
-#define MASTER	"ARIDA-2.10 (2015/7/12)"
+#define MASTER	"ARIDA-2.11 (2015/7/19)"
 
 #if defined(MRUBY_VER)
 	#if MRUBY_VER == VER100
@@ -37,11 +40,13 @@
 	#elif MRUBY_VER == VER110
 		#define WRBB_VERSION MASTER
 	#elif MRUBY_VER == UMEJAM
-		#define WRBB_VERSION "UmeJam-3.09 (2015/7/8)"
+		#define WRBB_VERSION "UmeJam-3.10 (2015/7/12)"
 	#elif MRUBY_VER == SAKURAJAM
-		#define WRBB_VERSION "SakuraJam-3.10 (2015/7/9)"
+		#define WRBB_VERSION "SakuraJam-3.10 (2015/7/12)"
 	#elif MRUBY_VER == SAKURUBY
-		#define WRBB_VERSION "SakuRuby-2.08 (2015/7/8)"
+		#define WRBB_VERSION "SakuRuby-2.10 (2015/7/12)"
+	#elif MRUBY_VER == SDBT
+		#define WRBB_VERSION "SDBT-2.11 (2015/7/19)"
 	#endif
 #else
 	#define WRBB_VERSION MASTER
@@ -63,9 +68,6 @@
 
 #define RB_PIN0		1
 #define RB_PIN1		0
-#define RB_PIN2		8
-#define RB_PIN3		30
-#define RB_PIN4		31
 #define RB_PIN5		24
 #define RB_PIN6		26
 #define RB_PIN7		6
@@ -79,8 +81,28 @@
 #define RB_PIN15	15
 #define RB_PIN16	16
 #define RB_PIN17	17
-#define RB_PIN18	22
-#define RB_PIN19	23
+
+#if defined(MRUBY_VER)
+	#if MRUBY_VER == VER100
+		#define RB_PIN18	22
+		#define RB_PIN19	23
+		#define RB_PIN2		8
+		#define RB_PIN3		30
+		#define RB_PIN4		31
+	#else
+		#define RB_PIN18	30
+		#define RB_PIN19	31
+		#define RB_PIN2		22
+		#define RB_PIN3		23
+		#define RB_PIN4		8
+	#endif
+#else
+	#define RB_PIN18	22
+	#define RB_PIN19	23
+	#define RB_PIN2		8
+	#define RB_PIN3		30
+	#define RB_PIN4		31
+#endif
 
 #define RB_LED	PIN_LED0
 

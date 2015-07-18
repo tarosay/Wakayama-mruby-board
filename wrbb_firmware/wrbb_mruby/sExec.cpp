@@ -38,7 +38,7 @@
 	#include "sPanCake.h"
 #endif
 
-#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM || MRUBY_VER == SAKURUBY )
+#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM || MRUBY_VER == SAKURUBY || MRUBY_VER == SDBT)
 	#include "sSdCard.h"
 #endif
 
@@ -83,7 +83,7 @@ bool notFinishFlag = true;
 	pancake_Init(mrb);		//PanCake関連メソッドの設定
 #endif
 
-#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM || MRUBY_VER == SAKURUBY )
+#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM || MRUBY_VER == SAKURUBY || MRUBY_VER == SDBT)
 	sdcard_Init(mrb);		//SDカード関連メソッドの設定
 #endif
 

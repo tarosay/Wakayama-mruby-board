@@ -133,9 +133,8 @@ char	*str;
 	return mrb_fixnum_value( ret );
 }
 
-
 //**************************************************
-// ファイルをクローズします: SD.close( number )
+// ファイルをクローズします: SD.close
 //	SD.close( number )
 //	number: ファイル番号 0 または 1
 //**************************************************
@@ -201,11 +200,144 @@ int ret = 0;
 }
 
 //**************************************************
+//ファイルが存在するかどうか調べる: SD.exists
+//	SD.exists( filename )
+//  filename: 調べるファイル名
+//
+// 戻り値
+//	存在する: 1, 存在しない: 0
+//**************************************************
+mrb_value mrb_sdcard_exists(mrb_state *mrb, mrb_value self)
+{
+mrb_value value;
+char	*str;
+int ret = 0;
+
+	int n = mrb_get_args(mrb, "S", &value);
+
+	str = RSTRING_PTR(value);
+
+	if( MicroSD.exists( str )==true){
+		ret = 1;
+	}
+
+	return mrb_fixnum_value( ret );
+}
+
+//**************************************************
+// ディレクトリを作成する: SD.mkdir
+//	SD.mkdir( dirname )
+//  dirname: 作成するディレクトリ名
+//
+// 戻り値
+//	成功: 1, 失敗: 0
+//**************************************************
+mrb_value mrb_sdcard_mkdir(mrb_state *mrb, mrb_value self)
+{
+mrb_value value;
+char	*str;
+int ret = 0;
+
+	int n = mrb_get_args(mrb, "S", &value);
+
+	str = RSTRING_PTR(value);
+
+	if( MicroSD.mkdir( str )==true){
+		ret = 1;
+	}
+
+	return mrb_fixnum_value( ret );
+}
+
+//**************************************************
+// ファイルを削除する: SD.remove
+//	SD.remove( filename )
+//  filename: 削除するファイル名
+//
+// 戻り値
+//	成功: 1, 失敗: 0
+//**************************************************
+mrb_value mrb_sdcard_remove(mrb_state *mrb, mrb_value self)
+{
+mrb_value value;
+char	*str;
+int ret = 0;
+
+	int n = mrb_get_args(mrb, "S", &value);
+
+	str = RSTRING_PTR(value);
+
+	if( MicroSD.remove( str )==true){
+		ret = 1;
+	}
+
+	return mrb_fixnum_value( ret );
+}
+
+//**************************************************
+// ファイル名を変更する: SD.rename
+//	SD.rename( oldfilename, newfilename )
+//  oldfilename: 旧ファイル名
+//  newfilename: 新しいファイル名
+//
+// 戻り値
+//	成功: 1, 失敗: 0
+//**************************************************
+mrb_value mrb_sdcard_rename(mrb_state *mrb, mrb_value self)
+{
+mrb_value value1, value2;
+char	*str1;
+char	*str2;
+int ret = 0;
+
+	int n = mrb_get_args(mrb, "SS", &value1, &value2);
+
+	str1 = RSTRING_PTR(value1);
+	str2 = RSTRING_PTR(value2);
+
+	if( MicroSD.rename( str1, str2 )==true){
+		ret = 1;
+	}
+
+	return mrb_fixnum_value( ret );
+}
+
+//**************************************************
+// ディレクトリを削除する: SD.rmdir
+//	SD.rmdir( dirname )
+//  dirname: 削除するディレクトリ名
+//
+// 戻り値
+//	成功: 1, 失敗: 0
+//**************************************************
+mrb_value mrb_sdcard_rmdir(mrb_state *mrb, mrb_value self)
+{
+mrb_value value;
+char	*str;
+int ret = 0;
+
+	int n = mrb_get_args(mrb, "S", &value);
+
+	str = RSTRING_PTR(value);
+
+	if( MicroSD.rmdir( str )==true){
+		ret = 1;
+	}
+
+	return mrb_fixnum_value( ret );
+}
+
+//**************************************************
 // ライブラリを定義します
 //**************************************************
 void sdcard_Init(mrb_state *mrb)
 {
+	//SDカードライブラリを初期化します
+	MicroSD.begin();
+
 	struct RClass *sdcardModule = mrb_define_module(mrb, "SD");
+
+	mrb_define_module_function(mrb, sdcardModule, "exists", mrb_sdcard_exists, MRB_ARGS_REQ(1));
 
 	mrb_define_module_function(mrb, sdcardModule, "read", mrb_sdcard_read, MRB_ARGS_REQ(1));
 
@@ -216,5 +348,10 @@ void sdcard_Init(mrb_state *mrb)
 	mrb_define_module_function(mrb, sdcardModule, "open", mrb_sdcard_open, MRB_ARGS_REQ(2) | MRB_ARGS_OPT(1));
 
 	mrb_define_module_function(mrb, sdcardModule, "close", mrb_sdcard_close, MRB_ARGS_REQ(1));
+
+	mrb_define_module_function(mrb, sdcardModule, "mkdir", mrb_sdcard_mkdir, MRB_ARGS_REQ(1));
+	mrb_define_module_function(mrb, sdcardModule, "remove", mrb_sdcard_remove, MRB_ARGS_REQ(1));
+	mrb_define_module_function(mrb, sdcardModule, "rename", mrb_sdcard_rename, MRB_ARGS_REQ(2));
+	mrb_define_module_function(mrb, sdcardModule, "rmdir", mrb_sdcard_rmdir, MRB_ARGS_REQ(1));
 
 }
