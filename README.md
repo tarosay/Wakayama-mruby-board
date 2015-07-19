@@ -15,17 +15,18 @@
   mruby ver1.0.0 -> ByteCode Format Ver.0002
   mruby ver1.1.0 -> ByteCode Format Ver.0003
 
-  Version ARIDA2-1.13(2015/7/19)f3
+  Version ARIDA2 - 1.13 (2015/7/19) f3
+  
            |   |   |      |      |
            |   |   |      |   ByteCode Format Number
-		   |   |   |
-		   |   |   |    作成日
-		   |   |   |
-		   |   | バージョン番号
-		   |   |
-		   |  回路基板番号
-		   |
-		 ファームウァエ名称
+           |   |   |      |
+           |   |   |    作成日
+           |   |   |
+           |   | バージョン番号
+           |   |
+           |  回路基板番号
+           |
+         ファームウァエ名称
 
 ------
   It is a source of mruby board of Wakayama.rb.
