@@ -36,8 +36,8 @@
 
 //基板のタイプ設定
 //#define BOARD	BOARD_GR
-//#define BOARD	BOARD_P01
-#define BOARD	BOARD_P02
+#define BOARD	BOARD_P01
+//#define BOARD	BOARD_P02
 
 //ファームウェア設定
 #define FIRMWARE	MASTER

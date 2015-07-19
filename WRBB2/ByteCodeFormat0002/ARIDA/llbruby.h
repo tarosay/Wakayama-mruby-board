@@ -31,8 +31,8 @@
 #define BOARD_P02	2
 
 //バイトコードフォーマットの設定
-//#define BYTECODE	BYTE_CODE2
-#define BYTECODE	BYTE_CODE3
+#define BYTECODE	BYTE_CODE2
+//#define BYTECODE	BYTE_CODE3
 
 //基板のタイプ設定
 //#define BOARD	BOARD_GR

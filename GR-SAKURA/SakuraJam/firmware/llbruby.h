@@ -35,13 +35,13 @@
 #define BYTECODE	BYTE_CODE3
 
 //基板のタイプ設定
-//#define BOARD	BOARD_GR
+#define BOARD	BOARD_GR
 //#define BOARD	BOARD_P01
-#define BOARD	BOARD_P02
+//#define BOARD	BOARD_P02
 
 //ファームウェア設定
-#define FIRMWARE	MASTER
-//#define FIRMWARE	JAM
+//#define FIRMWARE	MASTER
+#define FIRMWARE	JAM
 //#define FIRMWARE	SDBT
 
 //#define    DEBUG                1        // Define if you want to debug

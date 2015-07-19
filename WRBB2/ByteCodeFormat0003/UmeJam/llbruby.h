@@ -40,8 +40,8 @@
 #define BOARD	BOARD_P02
 
 //ファームウェア設定
-#define FIRMWARE	MASTER
-//#define FIRMWARE	JAM
+//#define FIRMWARE	MASTER
+#define FIRMWARE	JAM
 //#define FIRMWARE	SDBT
 
 //#define    DEBUG                1        // Define if you want to debug

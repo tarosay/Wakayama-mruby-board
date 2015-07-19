@@ -29,16 +29,15 @@
 #include "sI2c.h"
 #include "sServo.h"
 
-#if defined(MRUBY_VER) && ( MRUBY_VER == VER100 )
-#else
+#if BOARD == BOARD_GR || BOARD == BOARD_P02
 	#include "sRtc.h"
 #endif
 
-#if defined(MRUBY_VER) && ( MRUBY_VER == UMEJAM || MRUBY_VER == SAKURAJAM )
+#if FIRMWARE == JAM
 	#include "sPanCake.h"
 #endif
 
-#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM || MRUBY_VER == SAKURUBY || MRUBY_VER == SDBT)
+#if BOARD == BOARD_GR || FIRMWARE == SDBT
 	#include "sSdCard.h"
 #endif
 
@@ -74,16 +73,16 @@ bool notFinishFlag = true;
 	mem_Init(mrb);		//ファイル関連メソッドの設定
 	i2c_Init(mrb);		//I2C関連メソッドの設定
 	servo_Init(mrb);	//サーボ関連メソッドの設定
-#if defined(MRUBY_VER) && ( MRUBY_VER == VER100 )
-#else
+
+#if BOARD == BOARD_GR || BOARD == BOARD_P02
 	rtc_Init(mrb);		//RTC関連メソッドの設定
 #endif
 
-#if defined(MRUBY_VER) && ( MRUBY_VER == UMEJAM || MRUBY_VER == SAKURAJAM )
+#if FIRMWARE == JAM
 	pancake_Init(mrb);		//PanCake関連メソッドの設定
 #endif
 
-#if defined(MRUBY_VER) && (MRUBY_VER == SAKURAJAM || MRUBY_VER == SAKURUBY || MRUBY_VER == SDBT)
+#if BOARD == BOARD_GR || FIRMWARE == SDBT
 	sdcard_Init(mrb);		//SDカード関連メソッドの設定
 #endif
 
@@ -115,10 +114,10 @@ bool notFinishFlag = true;
 
 	if( !(he[0]=='R' && he[1]=='I'
 	&& he[2]=='T' && he[3]=='E'
-#if defined(MRUBY_VER) && ( MRUBY_VER == VER100 )
+#if BYTECODE == BYTE_CODE2
 	&& he[4]=='0' && he[5]=='0'
 	&& he[6]=='0' && he[7]=='2'
-#else
+#elif BYTECODE == BYTE_CODE3
 	&& he[4]=='0' && he[5]=='0'
 	&& he[6]=='0' && he[7]=='3'
 #endif
