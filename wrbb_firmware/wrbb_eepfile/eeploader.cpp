@@ -18,41 +18,53 @@
 #include <eeploader.h>
 #include "../llbruby.h"
 
+#define COMMAND_LENGTH	32
+
 extern char RubyFilename[];
+
 extern uint8_t RubyCode[];
-char *Arry = (char*)RubyCode;
+//char *Arry = (char*)RubyCode;
+char *WriteData = (char*)RubyCode;
+char CommandData[COMMAND_LENGTH];
 bool StopFlg = false;		//強制終了フラグ
+
 
 //**************************************************
 // ライン入力
 //**************************************************
 void lineinput(char *arry)
 {
-	char az[10];
 	int k = 0;
+	int len = 0; 
+
 	while(k >= 0){
 		k = Serial.read();
 	}
 
-	int len = 0;
 	while(true){
 		k = 0;
 		while(k <= 0){
 			k = Serial.read();
 			delay(10);
 		}
-		if (k == 13 || k == 10){	break;	}
-		if (k == 8){
+
+		//DEBUG_PRINT("lineinput", k);
+
+		if (k == 13 || k == 10){
+			break;		
+		}
+		else if (k == 8){
 			len--;
-			if (len < 0){	len = 0;	}
+			if (len < 0){ len = 0; }
 		}
 		else{
 			arry[len] = k;
 			len++;
-			if (len > 31){	break;	}
+			if (len >= COMMAND_LENGTH){	break;	}
 		}
 		Serial.print((char)k);
 	}
+
 	arry[len] = 0;
 }
 
@@ -101,7 +113,7 @@ void writefile(char *fname, int size)
 		while(cnt<size){
 			if (Serial.available() > 0){
 				k = Serial.read();
-				Arry[cnt] = k;
+				WriteData[cnt] = k;
 				cnt++;
 				tm = millis() + 2000;
 			}
@@ -121,7 +133,7 @@ void writefile(char *fname, int size)
 		}
 
 		for(int i=0; i<size; i++){
-			if(EEP.fwrite(fp, Arry[i]) == -1){
+			if(EEP.fwrite(fp, WriteData[i]) == -1){
 				break;
 			}
 			if((i%256) == 0){
@@ -141,11 +153,16 @@ void writefile(char *fname, int size)
 //**************************************************
 int fileloader(const char* str0, const char* str1)
 {
-	char fname[32];
+	char fname[COMMAND_LENGTH];
 	int size = 0;
 	int led = digitalRead(RB_LED);
+	char tc[2];
+	char *fs[4];
 
 	StopFlg = false;
+
+	tc[0] = CommandData[0];
+	tc[1] = CommandData[1];
 
 	while(true){
 		//LEDを点灯する
@@ -161,98 +178,133 @@ int fileloader(const char* str0, const char* str1)
 		}
 		Serial.println(" (help->H [ENTER])");
 		Serial.print(">");
-		lineinput(Arry);
+		lineinput((char*)CommandData);
 
 		Serial.println();
 
-		if (Arry[0] == 'Z'){
+		//DEBUG_PRINT("CommandData[0]", (char)CommandData[0]);
+
+		if(CommandData[0] == '.'){
+			CommandData[0] = tc[0];
+			CommandData[1] = tc[1];
+
+			Serial.print(">");
+			Serial.println((char*)CommandData);
+		}
+		tc[0] = CommandData[0];
+		tc[1] = CommandData[1];
+
+		DEBUG_PRINT("CommandData", (char*)CommandData);
+
+		if (CommandData[0] == 'Z'){
 			EEP.format();
 		}
-		else if (Arry[0] == 'D'){
-			if(strlen(Arry) > 2){
+		else if (CommandData[0] == 'D'){
+			if(strlen(CommandData) > 2){
 
-				//スペースを0に変えて、ポインタを取得
-				char *fs;
-				int len = strlen(Arry);
+				//ファイル名を取得
+				int len = strlen(CommandData);
 				for(int i=0; i<len; i++){
-					if(Arry[i] == ' '){
-						fs = &Arry[i+1];
+					if(CommandData[i] == ' '){
+						fs[0] = &CommandData[i+1];
 						break;
 					}
 				}
-				strcpy(fname, fs);
+				strcpy(fname, fs[0]);
 				EEP.fdelete((const char*)fname);
 			}
 		}
-		else if (Arry[0] == 'R'){
-			if(strlen(Arry) > 2){
+		else if (CommandData[0] == 'R'){
+			if(strlen(CommandData) > 2){
 
-				//スペースを0に変えて、ポインタを取得
-				char *fs;
-				int len = strlen(Arry);
+				//ファイル名を取得
+				int len = strlen(CommandData);
 				for(int i=0; i<len; i++){
-					if(Arry[i] == ' '){
-						fs = &Arry[i+1];
+					if(CommandData[i] == ' '){
+						fs[0] = &CommandData[i+1];
 						break;
 					}
 				}
-				strcpy(fname, fs);
+				strcpy(fname, fs[0]);
 				strcpy( (char*)RubyFilename, fname );
+
+				len = strlen(RubyFilename);
+				if(RubyFilename[len-4] != '.'
+					|| RubyFilename[len-3] != 'm'
+					|| RubyFilename[len-2] != 'r'
+					|| RubyFilename[len-1] != 'b'){
+	
+					strcat(RubyFilename, ".mrb");				
+				}
 
 				//強制終了フラグを立てる
 				StopFlg = true;
 				break;
 			}
 		}
-		else if(Arry[0] == 'W'){
-			if(strlen(Arry) > 3){
+		else if(CommandData[0] == 'W'){
+			if(strlen(CommandData) > 3){
 				//スペースを0に変えて、ポインタを取得
-				char *fs[4];
 				int j = 0;
-				int len = strlen(Arry);
+				int len = strlen(CommandData);
 				for(int i=0; i<len; i++){
-					if(Arry[i] == ' '){
-						Arry[i] = 0;
-						fs[j] = &Arry[i+1];
+					if(CommandData[i] == ' '){
+						CommandData[i] = 0;
+						fs[j] = &CommandData[i+1];
 						j++;
 						if(j>2){	break;	}
 					}
 				}
 				strcpy(fname, fs[0]);
 				size = atoi(fs[1]);
-				writefile(fname, size);
-			}
-		}
-		else if(Arry[0] == 'X'){
-			if(strlen(Arry) > 3){
-				//スペースを0に変えて、ポインタを取得
-				char *fs[4];
-				int j = 0;
-				int len = strlen(Arry);
-				for(int i=0; i<len; i++){
-					if(Arry[i] == ' '){
-						Arry[i] = 0;
-						fs[j] = &Arry[i+1];
-						j++;
-						if(j>2){	break;	}
-					}
-				}
-				strcpy(fname, fs[0]);
-				size = atoi(fs[1]);
+
 				writefile(fname, size);
 
+				for(int i=0; i<j; i++){ *(fs[i] - 1) = ' '; }
+			}
+		}
+		else if(CommandData[0] == 'X'){
+			if(strlen(CommandData) > 3){
+				//スペースを0に変えて、ポインタを取得
+				int j = 0;
+				int len = strlen(CommandData);
+				for(int i=0; i<len; i++){
+					if(CommandData[i] == ' '){
+						CommandData[i] = 0;
+						fs[j] = &CommandData[i+1];
+						j++;
+						if(j>2){	break;	}
+					}
+				}
+				strcpy(fname, fs[0]);
+				size = atoi(fs[1]);
+
 				strcpy( (char*)RubyFilename, fname );
+
+				len = strlen(RubyFilename);
+				if(RubyFilename[len-4] != '.'
+					|| RubyFilename[len-3] != 'm'
+					|| RubyFilename[len-2] != 'r'
+					|| RubyFilename[len-1] != 'b'){
+	
+					strcat(RubyFilename, ".mrb");				
+				}
+
+				writefile(RubyFilename, size);
+
+				for(int i=0; i<j; i++){ *(fs[i] - 1) = ' '; }
+
 				//強制終了フラグを立てる
 				StopFlg = true;
 				break;
 			}
 		}
-		else if(Arry[0] == 'E'){
+		else if(CommandData[0] == 'E'){
 			//ファームウェア書き込み待ちにする
 			system_reboot( REBOOT_USERAPP );	//リセット後にユーザアプリを起動する
 			//system_reboot( REBOOT_FIRMWARE );	//リセット後にファームウェアを起動する
 		}
-		else if (Arry[0] == 'L'){
+		else if (CommandData[0] == 'L'){
 			Serial.println();
 			for(int i=0; i<64; i++){
 					
@@ -267,38 +319,38 @@ int fileloader(const char* str0, const char* str1)
 				}
 			}
 		}
-		else if(Arry[0] == 'A'){
+		else if(CommandData[0] == 'A'){
 			EEP.viewFat();
 		}
-		else if(Arry[0] == 'S'){
-			if(strlen(Arry) > 2){
-				//スペースを0に変えて、ポインタを取得
-				char *fs;
-				int len = strlen(Arry);
+		else if(CommandData[0] == 'S'){
+			if(strlen(CommandData) > 2){
+
+				int len = strlen(CommandData);
 				for(int i=0; i<len; i++){
-					if(Arry[i] == ' '){
-						fs = &Arry[i+1];
+					if(CommandData[i] == ' '){
+						fs[0] = &CommandData[i+1];
 						break;
 					}
 				}
-				EEP.viewSector( atoi(fs) );
+				EEP.viewSector( atoi(fs[0]) );
 			}
 		}
-		else if(Arry[0] == 'Q'){
+		else if(CommandData[0] == 'Q'){
 			break;
 		}
 		else{
 			Serial.println();
-			Serial.println("EEPROM FileWriter Ver. 1.30");
+			Serial.println("EEPROM FileWriter Ver. 1.52");
 			Serial.println(" Command List");
 			Serial.println(" L:List Filename..........>L [ENTER]");
 			Serial.println(" W:Write File.............>W Filename Size [ENTER]");
 			Serial.println(" D:Delete File............>D Filename [ENTER]");
-			Serial.println(" Z:Delete All Files.......>Z [ENTER]");
-			Serial.println(" A:List FAT...............>A [ENTER]");
-			Serial.println(" R:Set Run File...........>R Filename [ENTER]");
-			Serial.println(" X:Execte File............>X Filename [ENTER]");
-			Serial.println(" S:List Sector............>S Number [ENTER]");
+			//Serial.println(" Z:Delete All Files.......>Z [ENTER]");
+			//Serial.println(" A:List FAT...............>A [ENTER]");
+			Serial.println(" R:Run File...............>R Filename [ENTER]");
+			Serial.println(" X:Execute File...........>X Filename Size [ENTER]");
+			//Serial.println(" S:List Sector............>S Number [ENTER]");
+			Serial.println(" .:Repeat.................>. [ENTER]");
 			Serial.println(" Q:Quit...................>Q [ENTER]");
 			Serial.println(" E:System Reset...........>E [ENTER]");
 		}
@@ -309,5 +361,6 @@ int fileloader(const char* str0, const char* str1)
 	if(StopFlg == true){
 		return 1;
 	}
+
 	return 0;
 }

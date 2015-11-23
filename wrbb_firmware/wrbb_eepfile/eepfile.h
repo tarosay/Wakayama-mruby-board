@@ -56,7 +56,7 @@ class EEPFILE
 	void saveFat(void);
 	int getSect(FILEEEP *file, int *add);
 	int epWrite(unsigned long addr,unsigned char data);
-
+	int isReady();
 };
 
 extern EEPFILE	EEP;

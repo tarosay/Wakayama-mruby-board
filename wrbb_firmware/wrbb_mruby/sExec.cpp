@@ -1,5 +1,5 @@
 /*
- * 呼び出し実行モジュールプログラム 2015.7.6
+ * 呼び出し実行モジュールプログラム 2015.11.24
  *
  * Copyright (c) 2015 Minao Yamamoto
  *
@@ -29,7 +29,7 @@
 #include "sI2c.h"
 #include "sServo.h"
 
-#if BOARD == BOARD_GR || BOARD == BOARD_P02
+#if REALTIMECLOCK
 	#include "sRtc.h"
 #endif
 
@@ -37,10 +37,13 @@
 	#include "sPanCake.h"
 #endif
 
-#if BOARD == BOARD_GR || FIRMWARE == SDBT
+#if BOARD == BOARD_GR || FIRMWARE == SDBT || FIRMWARE == SDWF
 	#include "sSdCard.h"
 #endif
 
+#if FIRMWARE == SDWF
+	#include "sWiFi.h"
+#endif
 
 //バージョンのセット
 volatile char	ProgVer[] = {WRBB_VERSION};
@@ -74,7 +77,7 @@ bool notFinishFlag = true;
 	i2c_Init(mrb);		//I2C関連メソッドの設定
 	servo_Init(mrb);	//サーボ関連メソッドの設定
 
-#if BOARD == BOARD_GR || BOARD == BOARD_P02
+#if REALTIMECLOCK
 	rtc_Init(mrb);		//RTC関連メソッドの設定
 #endif
 
@@ -82,10 +85,13 @@ bool notFinishFlag = true;
 	pancake_Init(mrb);		//PanCake関連メソッドの設定
 #endif
 
-#if BOARD == BOARD_GR || FIRMWARE == SDBT
+#if BOARD == BOARD_GR || FIRMWARE == SDBT || FIRMWARE == SDWF
 	sdcard_Init(mrb);		//SDカード関連メソッドの設定
 #endif
 
+#if FIRMWARE == SDWF
+	esp8266_Init(mrb);		//WiFi関連メソッドの設定
+#endif
 
 
 	//DEBUG_PRINT("RubyFilename",RubyFilename);
@@ -103,7 +109,7 @@ bool notFinishFlag = true;
 		Serial.println( az );
 		mrb_close(mrb);
 
-		fileloader((const char*)ProgVer,"");
+		//fileloader((const char*)ProgVer,"");
 		return false;
 	}
 

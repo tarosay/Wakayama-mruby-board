@@ -108,7 +108,7 @@ void EEPFILE::viewSector(int sect)
 //******************************************************
 void EEPFILE::begin(int clear)
 {
-	if (clear == 0){
+	if (clear == 0 && isReady() == 1){
 		// EEPROMからFATを読み込みます
 		for (int i=0; i<EEPSECTORS; i++){
 			Sect[i] = EEPROM.read( EEPFAT_START + i*2 ) + (EEPROM.read( EEPFAT_START + i*2 + 1 )<<8);
@@ -524,7 +524,7 @@ void EEPFILE::setFile( FILEEEP *file, const char *filename, int sect, int mode)
 {
 	int add = sect * EEPSECTOR_SIZE;
 	int len = strlen(filename);
-	int a1;
+	//int a1;
 
 	//セクタ配列をセットします(自分自身をセット)
 	Sect[sect] = sect & 0x7F;		//とりあえずトップセクタ番号をセットする
@@ -635,4 +635,19 @@ int EEPFILE::epWrite(unsigned long addr,unsigned char data)
 		return EEPROM.write(addr, data);
 	}
 	return 1;
+}
+
+//*********
+// EEPROMが初期化状態(FFFFで埋まっている)であれば、0を返します
+//*********
+int EEPFILE::isReady()
+{
+unsigned short sect;
+
+	for (int i=0; i<EEPSECTORS; i++){
+		sect = EEPROM.read( EEPFAT_START + i*2 ) + (EEPROM.read( EEPFAT_START + i*2 + 1 )<<8);
+		
+		if(sect != 0xFFFF){ return 1; }
+	}
+	return 0;
 }
