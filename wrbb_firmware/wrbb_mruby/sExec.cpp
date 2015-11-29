@@ -97,9 +97,14 @@ bool notFinishFlag = true;
 	//DEBUG_PRINT("RubyFilename",RubyFilename);
 
 	strcpy( ExeFilename, RubyFilename );		//実行するファイルをExeFilename[]に入れる。
-	strcpy( RubyFilename, RubyStartFileName );	//とりあえず、RubyFilename[]をRubyStartFileName[]に初期化する。
+	//strcpy( RubyFilename, RubyStartFileName );	//とりあえず、RubyFilename[]をRubyStartFileName[]に初期化する。
 
-	//DEBUG_PRINT("ExeFilename",ExeFilename);
+	RubyFilename[0] = 0;						//Rubyファイル名をクリアする。System.setRun()やFileloaderでセットされ無い限り何も入っていない
+
+	if(ExeFilename[0] == 0){
+		mrb_close(mrb);
+		return false;
+	}
 
 	FILEEEP fpj;
 	FILEEEP *fp = &fpj;

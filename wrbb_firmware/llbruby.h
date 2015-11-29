@@ -193,7 +193,7 @@
 		#endif
 	#elif BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "ARIDA4-1.16(2015/11/24)f3"
+			#define WRBB_VERSION "ARIDA4-1.17(2015/11/29)f3"
 		#elif FIRMWARE == JAM
 			#define WRBB_VERSION "UmeJam2-1.13(2015/7/19)f3"
 		#elif FIRMWARE == SDBT
