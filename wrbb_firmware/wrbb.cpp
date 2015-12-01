@@ -134,7 +134,8 @@ void setup()
 void loop()
 {
 	if( RubyRun()==false ){
-		
+
+		DEBUG_PRINT("RubyRun", "FALSE");
 		fileloader((const char*)ProgVer,MRUBY_VERSION);
 	}
 }
