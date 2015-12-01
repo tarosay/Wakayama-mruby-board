@@ -103,6 +103,8 @@ bool notFinishFlag = true;
 
 	if(ExeFilename[0] == 0){
 		mrb_close(mrb);
+
+		DEBUG_PRINT("ExeFilename","NULL");
 		return false;
 	}
 

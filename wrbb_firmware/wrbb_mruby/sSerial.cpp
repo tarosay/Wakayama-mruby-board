@@ -36,13 +36,18 @@ int num, bps;
 		return mrb_nil_value();			//戻り値は無しですよ。
 	}
 
-	if (serial[num] != 0){
-		serial[num]->end();
-		delay(50);
-		delete serial[num];
+	if(num == 0){
+		serial[num] = &Serial;
 	}
+	else{
+		if (serial[num] != 0){
+			serial[num]->end();
+			delay(50);
+			delete serial[num];
+		}
 	
-	serial[num] = new CSerial();
+		serial[num] = new CSerial();
+	}
 
 	//シリアル通信の初期化
 	SCI_PORT sci = SCI_USB0;
@@ -64,8 +69,10 @@ int num, bps;
 		break;
 	}
 
-	serial[num]->begin(bps, sci);
-	sci_convert_crlf_ex(serial[num]->get_handle(), CRLF_NONE, CRLF_NONE);		//バイナリを通せるようにする
+	if(sci != SCI_USB0){
+		serial[num]->begin(bps, sci);
+		sci_convert_crlf_ex(serial[num]->get_handle(), CRLF_NONE, CRLF_NONE);		//バイナリを通せるようにする
+	}
 
 	return mrb_nil_value();			//戻り値は無しですよ。
 }
@@ -242,12 +249,14 @@ int		ret = 0;
 		return mrb_nil_value();			//戻り値は無しですよ。
 	}
 
-	if (serial[num] != 0){
-		serial[num]->end();
-		delay(50);
-		delete serial[num];
-	}
+	if(num != 0){	//USBは閉じない
 
+		if (serial[num] != 0){
+			serial[num]->end();
+			delay(50);
+			delete serial[num];
+		}
+	}
 	serial[num] = 0;
 
 	return mrb_fixnum_value( ret );
