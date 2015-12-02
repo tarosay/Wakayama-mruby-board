@@ -68,9 +68,9 @@ void lineinput(char *arry)
 		delay(10);
 	}
 
-	while(USB_Serial->available()){
-		USB_read();
-	}
+	//while(USB_Serial->available()){
+	//	USB_read();
+	//}
 
 	while(true){
 		k = 0;
@@ -412,7 +412,7 @@ int fileloader(const char* str0, const char* str1)
 		}
 		else{
 			USB_Serial->println();
-			USB_Serial->println("EEPROM FileWriter Ver. 1.53");
+			USB_Serial->println("EEPROM FileWriter Ver. 1.54");
 			USB_Serial->println(" Command List");
 			USB_Serial->println(" L:List Filename..........>L [ENTER]");
 			USB_Serial->println(" W:Write File.............>W Filename Size [ENTER]");
@@ -425,8 +425,8 @@ int fileloader(const char* str0, const char* str1)
 			USB_Serial->println(" .:Repeat.................>. [ENTER]");
 			USB_Serial->println(" Q:Quit...................>Q [ENTER]");
 			USB_Serial->println(" E:System Reset...........>E [ENTER]");
-			USB_Serial->println(" U:Write File B2A.........>U Filename Size [ENTER]");
-			USB_Serial->println(" V:Execute File B2A.......>V Filename Size [ENTER]");
+			//USB_Serial->println(" U:Write File B2A.........>U Filename Size [ENTER]");
+			//USB_Serial->println(" V:Execute File B2A.......>V Filename Size [ENTER]");
 		}
 	}
 
