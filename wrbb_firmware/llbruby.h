@@ -63,7 +63,7 @@
 #define	FILE_LOAD	PORT3.PIDR.BIT.B5		//PORT 3-5
 
 #define XML_FILENAME  "wrbb.xml"
-#define RUBY_FILENAME  "wrbb.mrb"
+#define RUBY_FILENAME  "main.mrb"
 #define RUBY_FILENAME_SIZE 32
 
 #if BOARD == BOARD_GR || BOARD == BOARD_P02 || BOARD == BOARD_P03 || BOARD == BOARD_P04
@@ -193,7 +193,7 @@
 		#endif
 	#elif BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "ARIDA4-1.19(2015/12/3)f3"
+			#define WRBB_VERSION "ARIDA4-1.21(2015/12/4)f3"
 		#elif FIRMWARE == JAM
 			#define WRBB_VERSION "UmeJam2-1.13(2015/7/19)f3"
 		#elif FIRMWARE == SDBT

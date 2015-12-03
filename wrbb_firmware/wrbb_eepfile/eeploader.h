@@ -9,5 +9,6 @@
  */
 
 void lineinput(char *arry);
-void writefile(char *fname, int size);
+void writefile(const char *fname, int size, char code);
+void readfile(const char *fname, char code);
 int fileloader(const char* str0, const char* str1);

@@ -101,11 +101,63 @@ void lineinput(char *arry)
 }
 
 //**************************************************
+// 指定したmsecの間シリアル入力を待ちます
+// 戻り値: 0:入力無し, 1:入力あり
+//**************************************************
+int waitRcv(int msec){
+
+	unsigned long tm = millis() + msec;
+	int sa = 0;
+
+	USB_Serial->print("Waiting ");
+	while(tm > millis()){
+		if (USB_Serial->available() > 0){
+			return 1;
+		}
+		if(sa != (tm - millis()) / 1000){
+			sa = (tm - millis()) / 1000;
+			USB_Serial->print(" ");
+			USB_Serial->print(sa, 10);
+		}
+	}
+	USB_Serial->println("..Wait Error!");
+	return 0;
+}
+
+//**************************************************
+// 16進文字を10進数に変換する
+//**************************************************
+int HexText2Int(char t0, char t1)
+{
+	int ans = 0;
+	if(t0 >= '0' && t0 <= '9'){
+		ans = (t0 - '0') * 16;
+	}
+	else if(t0 >= 'A' && t0 <= 'F'){
+		ans = (t0 - 'A' + 10) * 16;
+	}
+	else if(t0 >= 'a' && t0 <= 'f'){
+		ans = (t0 - 'a' + 10) * 16;
+	}
+
+	if(t1 >= '0' && t1 <= '9'){
+		ans += t1 - '0';
+	}
+	else if(t1 >= 'A' && t1 <= 'F'){
+		ans += t1 - 'A' + 10;
+	}
+	else if(t1 >= 'a' && t1 <= 'f'){
+		ans += t1 - 'a' + 10;
+	}
+	return ans;
+}
+
+//**************************************************
 // ファイルを保存します
 // 60sec待って、データが何も送られてこないときには、
 // ファイル保存を終了します
 //**************************************************
-void writefile(char *fname, int size, char code)
+void writefile(const char *fname, int size, char code)
 {
 	FILEEEP fpj;
 	FILEEEP *fp = &fpj;
@@ -119,36 +171,25 @@ void writefile(char *fname, int size, char code)
 		b2a = 1;	//バイナリが2バイトのアスキーコードで来ているフラグ
 	}
 
-	if(binsize<=0 || binsize>=RUBY_CODE_SIZE){
+	if(binsize <= 0){ return; }
+
+	if(binsize>=RUBY_CODE_SIZE && (code == 'X' || code == 'V')){
 		return;
 	}
 
 	USB_Serial->println();
 
 	//シリアルバッファ消去
-	while(k >= 0){	k = USB_read();	}
+	while(USB_Serial->available()){ USB_read();	}
 
-	USB_Serial->print("Waiting ");
-	tm = millis() + 60000;
-	int sa = 0;
-	int writeFlg = 0;
-	while(tm > millis()){
-		if (USB_Serial->available() > 0){
-			writeFlg = 1;
-			break;
-		}
-		if(sa != (tm - millis()) / 1000){
-			sa = (tm - millis()) / 1000;
-			USB_Serial->print(" ");
-			USB_Serial->print(sa, 10);
-		}
+	if(waitRcv(60000) == 0){
+		return;
 	}
-
 	USB_Serial->println();
-	if(writeFlg == 1){
-		int cnt = 0;
-		int binCnt = 0;
 
+	int cnt = 0;
+	int binCnt = 0;
+	if(code == 'X' || code == 'V'){
 		tm = millis() + 2000;
 		while(cnt < size){
 			if (USB_Serial->available() > 0){
@@ -158,51 +199,34 @@ void writefile(char *fname, int size, char code)
 				if(b2a > 0){
 					if(b2a > 1){
 						binCnt--;
-						if(WriteData[binCnt] >= '0' && WriteData[binCnt] <= '9'){
-							b2a = (WriteData[binCnt] - '0') * 16;
-						}
-						else if(WriteData[binCnt] >= 'A' && WriteData[binCnt] <= 'F'){
-							b2a = (WriteData[binCnt] - 'A' + 10) * 16;
-						}
-						else if(WriteData[binCnt] >= 'a' && WriteData[binCnt] <= 'f'){
-							b2a = (WriteData[binCnt] - 'a' + 10) * 16;
-						}
-
-						if(k >= '0' && k <= '9'){
-							k = b2a + k - '0';
-						}
-						else if(k >= 'A' && k <= 'F'){
-							k = b2a + k - 'A' + 10;
-						}
-						else if(k >= 'a' && k <= 'f'){
-							k = b2a + k - 'a' + 10;
-						}
+						k = HexText2Int(WriteData[binCnt], k);
 						b2a = 1;
 					}
 					else{
 						b2a++;
 					}
 				}
-
 				WriteData[binCnt] = k;
 				binCnt++;
 				tm = millis() + 2000;
 			}
 			if(tm < millis()){	break;	}
 		}
+	}
 
-		if(tm < millis()){
-			USB_Serial->println("..Read Error!");
-			return;
-		}
+	if(tm < millis()){
+		USB_Serial->println("..Read Error!");
+		return;
+	}
 
-		USB_Serial->print(fname);
-		USB_Serial->print(" Saving");
+	USB_Serial->print(fname);
+	USB_Serial->print(" Saving");
 
-		if(EEP.fopen(fp, fname, EEP_WRITE) == -1){
-			return;
-		}
+	if(EEP.fopen(fp, fname, EEP_WRITE) == -1){
+		return;
+	}
 
+	if(code == 'X' || code == 'V'){
 		for(int i=0; i<binsize; i++){
 			if(EEP.fwrite(fp, WriteData[i]) == -1){
 				break;
@@ -211,11 +235,111 @@ void writefile(char *fname, int size, char code)
 				USB_Serial->print(".");
 			}
 		}
-		EEP.fclose(fp);
-		USB_Serial->println(".");
+	}
+	else{
+		tm = millis() + 2000;
+		cnt = 0;
+		while(cnt < size){
+			if (USB_Serial->available() > 0){
+				k = USB_read();
+				cnt++;
+
+				if(b2a > 0){
+					if(b2a > 1){
+						k = HexText2Int(WriteData[0], k);
+						b2a = 1;
+
+						if(EEP.fwrite(fp, (char)k) == -1){
+							break;
+						}
+					}
+					else{
+						WriteData[0] = k;
+						b2a++;
+					}
+				}
+				else{
+					if(EEP.fwrite(fp, (char)k) == -1){
+						break;
+					}
+				}
+				
+				if((cnt%256) == 0){
+					USB_Serial->print(".");
+				}
+				tm = millis() + 2000;
+			}
+			if(tm < millis()){	break;	}
+		}
+	}
+	
+	EEP.fclose(fp);
+
+	USB_Serial->println(".");
+	
+	StopFlg = true;
+}
+
+//**************************************************
+// ファイルを読み出します
+// 60sec待って、データが何も送られてこないときには、
+// ファイル読み出しを終了します
+//**************************************************
+void readfile(const char *fname, char code)
+{
+	FILEEEP fpj;
+	FILEEEP *fp = &fpj;
+	unsigned long tm;
+	int k = 0;
+	int binsize;
+
+	USB_Serial->println();
+
+	//シリアルバッファ消去
+	while(k >= 0){	k = USB_read();	}
+
+	//60sec間入力を待ちます
+	if(waitRcv(60000) == 0){
+		return;
 	}
 
-	StopFlg = true;
+	//シリアルバッファ消去
+	k = USB_read();
+	while(k >= 0){	k = USB_read();	}
+
+	USB_Serial->println();
+
+	//ファイルサイズの取得
+	binsize = EEP.ffilesize(fname);
+
+	//ファイルサイズの送信
+	USB_Serial->println(binsize, 10);
+
+	//60sec間入力を待ちます
+	if(waitRcv(60000) == 0){
+		return;
+	}
+
+	//シリアルバッファ消去
+	k = USB_read();
+	while(k >= 0){	k = USB_read();	}
+
+	//ファイルオープン
+	if(EEP.fopen(fp, fname, EEP_READ) == -1){
+		USB_Serial->println("..Read Error!");
+		return;
+	}
+
+	for(int i=0; i<binsize; i++){
+
+		if(code == 'G'){
+			USB_Serial->write((unsigned char)EEP.fread(fp));
+		}
+		else{
+			USB_Serial->print(EEP.fread(fp));
+		}
+	}
+	EEP.fclose(fp);
 }
 
 //**************************************************
@@ -284,6 +408,22 @@ int fileloader(const char* str0, const char* str1)
 				}
 				strcpy(fname, fs[0]);
 				EEP.fdelete((const char*)fname);
+			}
+		}
+		else if (CommandData[0] == 'G' || CommandData[0] == 'F'){
+			if(strlen(CommandData) > 2){
+
+				//ファイル名を取得
+				int len = strlen(CommandData);
+				for(int i=0; i<len; i++){
+					if(CommandData[i] == ' '){
+						fs[0] = &CommandData[i+1];
+						break;
+					}
+				}
+				strcpy(fname, fs[0]);
+
+				readfile(fname, CommandData[0]);
 			}
 		}
 		else if (CommandData[0] == 'R'){
@@ -362,7 +502,7 @@ int fileloader(const char* str0, const char* str1)
 					strcat(RubyFilename, ".mrb");				
 				}
 
-				writefile(fname, size, CommandData[0]);
+				writefile(RubyFilename, size, CommandData[0]);
 
 				for(int i=0; i<j; i++){ *(fs[i] - 1) = ' '; }
 
@@ -412,7 +552,7 @@ int fileloader(const char* str0, const char* str1)
 		}
 		else{
 			USB_Serial->println();
-			USB_Serial->println("EEPROM FileWriter Ver. 1.54");
+			USB_Serial->println("EEPROM FileWriter Ver. 1.56");
 			USB_Serial->println(" Command List");
 			USB_Serial->println(" L:List Filename..........>L [ENTER]");
 			USB_Serial->println(" W:Write File.............>W Filename Size [ENTER]");
@@ -427,6 +567,8 @@ int fileloader(const char* str0, const char* str1)
 			USB_Serial->println(" E:System Reset...........>E [ENTER]");
 			//USB_Serial->println(" U:Write File B2A.........>U Filename Size [ENTER]");
 			//USB_Serial->println(" V:Execute File B2A.......>V Filename Size [ENTER]");
+			USB_Serial->println(" G:Get File...............>G Filename [ENTER]");
+			USB_Serial->println(" F:Get File B2A...........>F Filename [ENTER]");
 		}
 	}
 
