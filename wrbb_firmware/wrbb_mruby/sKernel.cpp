@@ -292,6 +292,17 @@ int value;
 }
 
 //**************************************************
+// 隠しコマンドです:  El_Psy.Congroo
+//	El_Psy.Congroo()
+//**************************************************
+mrb_value mrb_El_Psy_congroo(mrb_state *mrb, mrb_value self)
+{
+	mrb_raise(mrb, mrb_class_get(mrb, "Sys#exit Called"), "Normal Completion");
+
+	return mrb_nil_value();	//戻り値は無しですよ。
+}
+
+//**************************************************
 // ライブラリを定義します
 //**************************************************
 void kernel_Init(mrb_state *mrb)
@@ -311,4 +322,8 @@ void kernel_Init(mrb_state *mrb)
 	mrb_define_method(mrb, mrb->kernel_module, "micros", mrb_kernel_micros, MRB_ARGS_NONE());
 
 	mrb_define_method(mrb, mrb->kernel_module, "led", mrb_kernel_led, MRB_ARGS_REQ(1));
+
+
+	struct RClass *El_PsyModule = mrb_define_module(mrb, "El_Psy");
+	mrb_define_module_function(mrb, El_PsyModule, "Congroo", mrb_El_Psy_congroo, MRB_ARGS_NONE());
 }
