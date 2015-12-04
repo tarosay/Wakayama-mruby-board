@@ -234,6 +234,39 @@ int EEPFILE::fseek(FILEEEP *file, int offset, int origin)
 }
 
 //******************************************************
+// ファイルをコピーします。必ず上書きします。
+// エラーの時は、-1を返す
+//******************************************************
+int EEPFILE::fcopy(const char *srcfilename, const char *dstfilename)
+{
+FILEEEP fsrcj;
+FILEEEP *fsrc = &fsrcj;
+FILEEEP fdstj;
+FILEEEP *fdst = &fdstj;
+
+	if(fopen(fsrc, srcfilename, EEP_READ) == -1){
+		return -1;
+	}
+
+	//ファイルがあるかもしれないので、とりあえず削除しておきます。なかったら-1が返ってくるだけ
+	fdelete(dstfilename);
+
+	if(fopen(fdst, dstfilename, EEP_WRITE) == -1){
+		return -1;
+	}
+
+	int dat = fread(fsrc);
+
+	while(dat >= 0){
+		fwrite(fdst, (char)dat);
+		dat = fread(fsrc);
+	}	
+
+	fclose(fdst);
+	fclose(fsrc);
+}
+
+//******************************************************
 // ファイルを削除します
 // エラーの時は、-1を返す
 //******************************************************
@@ -375,6 +408,21 @@ void EEPFILE::fclose(FILEEEP *file)
 	file->offsetaddress = 0;
 	file->seek = 0;
 	file->stasector = -1;
+}
+
+//******************************************************
+// ファイルの存在を調べます
+// 0:無し, 1:在り
+//******************************************************
+int EEPFILE::fexist(const char *filename)
+{
+	//ファイルを探します
+	int sect = scanFilename(filename);
+
+	if (sect == -1){
+		return 0;
+	}
+	return 1;
 }
 
 //******************************************************

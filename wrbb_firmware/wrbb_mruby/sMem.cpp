@@ -205,6 +205,45 @@ int ret = 0;
 }
 
 //**************************************************
+// ファイルをコピーします: MemFile.copy
+//  MemFile.copy( srcFilename, dstFilename[, mode] )
+//  srcFilename: コピー元ファイル名
+//  dstFilename: コピー先ファイル名
+//  mode: 0上書きしない, 1:上書きする
+// 戻り値
+//	成功: 1, 失敗: 0
+//**************************************************
+mrb_value mrb_mem_copy(mrb_state *mrb, mrb_value self)
+{
+mrb_value src, dst;
+int mode;
+int ret = 1;
+
+	int n = mrb_get_args(mrb, "SS|i", &src, &dst, &mode);
+	
+	DEBUG_PRINT("MemFile.copy", n);
+
+	if( n<3 ){
+		mode = 0;
+	}
+
+	if(mode == 0){
+		if(!EEP.fexist(RSTRING_PTR(dst))){
+			mode = 1;
+		}
+	}
+
+	DEBUG_PRINT("mode", mode);
+
+	if(mode == 1){
+		if(EEP.fcopy(RSTRING_PTR(src), RSTRING_PTR(dst)) == -1){
+			ret = 0;
+		}
+	}
+	return mrb_fixnum_value( ret );
+}
+
+//**************************************************
 // ライブラリを定義します
 //**************************************************
 void mem_Init(mrb_state *mrb)
@@ -221,4 +260,5 @@ void mem_Init(mrb_state *mrb)
 
 	mrb_define_module_function(mrb, memdModule, "close", mrb_mem_close, MRB_ARGS_REQ(1));
 
+	mrb_define_module_function(mrb, memdModule, "copy", mrb_mem_copy, MRB_ARGS_REQ(2) | MRB_ARGS_OPT(1));
 }

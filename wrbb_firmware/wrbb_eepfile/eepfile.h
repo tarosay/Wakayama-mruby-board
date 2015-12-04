@@ -37,12 +37,14 @@ class EEPFILE
 	void begin(int clear);
 	int fopen(FILEEEP *file, const char *filename, char mode);
 	int fdelete(const char *filename);
+	int fcopy(const char *srcfilename, const char *dstfilename);
 	int ffilesize(const char *filename);
 	int fseek(FILEEEP *file, int offset, int origin);
 	int fwrite(FILEEEP *file, char dat);
 	int fwrite(FILEEEP *file, char *arry, int *len);
 	int fread(FILEEEP *file);
 	void fclose(FILEEEP *file);
+	int fexist(const char *filename);
 	bool fEof(FILEEEP *file);
 	int fdir(int sect, char *filename);
 	void viewFat(void);

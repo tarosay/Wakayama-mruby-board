@@ -552,10 +552,12 @@ int fileloader(const char* str0, const char* str1)
 		}
 		else{
 			USB_Serial->println();
-			USB_Serial->println("EEPROM FileWriter Ver. 1.56");
+			USB_Serial->println("EEPROM FileWriter Ver. 1.57");
 			USB_Serial->println(" Command List");
 			USB_Serial->println(" L:List Filename..........>L [ENTER]");
 			USB_Serial->println(" W:Write File.............>W Filename Size [ENTER]");
+			USB_Serial->println(" G:Get File...............>G Filename [ENTER]");
+			//USB_Serial->println(" F:Get File B2A...........>F Filename [ENTER]");
 			USB_Serial->println(" D:Delete File............>D Filename [ENTER]");
 			//USB_Serial->println(" Z:Delete All Files.......>Z [ENTER]");
 			//USB_Serial->println(" A:List FAT...............>A [ENTER]");
@@ -567,8 +569,6 @@ int fileloader(const char* str0, const char* str1)
 			USB_Serial->println(" E:System Reset...........>E [ENTER]");
 			//USB_Serial->println(" U:Write File B2A.........>U Filename Size [ENTER]");
 			//USB_Serial->println(" V:Execute File B2A.......>V Filename Size [ENTER]");
-			USB_Serial->println(" G:Get File...............>G Filename [ENTER]");
-			USB_Serial->println(" F:Get File B2A...........>F Filename [ENTER]");
 		}
 	}
 
