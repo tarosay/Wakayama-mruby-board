@@ -87,6 +87,25 @@ int ret = 0;
 	case 19:
 		ret = RB_PIN19;
 		break;
+
+	case 20:
+		ret = RB_PIN20;
+		break;
+	case 21:
+		ret = RB_PIN21;
+		break;
+	case 22:
+		ret = RB_PIN22;
+		break;
+	case 23:
+		ret = RB_PIN23;
+		break;
+	case 24:
+		ret = RB_PIN24;
+		break;
+	case 25:
+		ret = RB_PIN25;
+		break;
 	}
 
 return ret;

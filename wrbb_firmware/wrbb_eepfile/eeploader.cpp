@@ -30,6 +30,7 @@ bool StopFlg = false;		//強制終了フラグ
 
 CSerial *USB_Serial = &Serial;
 
+int Ack_FE_mode = 0;		//0xFEを読んだときのモード。0:0xFEを読んだときに0xFEを返さない。普通にバッファに残す 1:0xFEを返す, 2:割り込みを発生させない
 
 //#define    DEBUG                1        // Define if you want to debug
 
@@ -39,20 +40,20 @@ CSerial *USB_Serial = &Serial;
 #  define DEBUG_PRINT(m,v)    // do nothing
 #endif
 
-//**************************************************
-// 0xFEを受信したら無条件に0xFEをエコーバックします
-//**************************************************
-int USB_read()
-{
-	int dat = USB_Serial->read();
-	if(dat == -2){
-		USB_Serial->write(0xFE);
+////**************************************************
+//// 0xFEを受信したら無条件に0xFEをエコーバックします
+////**************************************************
+//int USB_read()
+//{
+//	int dat = USB_Serial->read();
+	//if(dat == -2){
+	//	USB_Serial->write(0xFE);
 
-		DEBUG_PRINT("USB_read","0xFE");
-	}
+	//	DEBUG_PRINT("USB_read","0xFE");
+	//}
 
-	return dat;
-}
+//	return dat;
+//}
 
 //**************************************************
 // ライン入力
@@ -63,7 +64,7 @@ void lineinput(char *arry)
 	int len = 0; 
 
 	while(k >= 0){
-		k = USB_read();
+		k = USB_Serial->read();
 		//DEBUG_PRINT("1.lineinput", k);
 		delay(10);
 	}
@@ -75,7 +76,7 @@ void lineinput(char *arry)
 	while(true){
 		k = 0;
 		while(k <= 0){
-			k = USB_read();
+			k = USB_Serial->read();
 			//DEBUG_PRINT("2.lineinput", k);
 			delay(10);
 		}
@@ -180,7 +181,7 @@ void writefile(const char *fname, int size, char code)
 	USB_Serial->println();
 
 	//シリアルバッファ消去
-	while(USB_Serial->available()){ USB_read();	}
+	while(USB_Serial->available()){ USB_Serial->read();	}
 
 	if(waitRcv(60000) == 0){
 		return;
@@ -193,7 +194,7 @@ void writefile(const char *fname, int size, char code)
 		tm = millis() + 2000;
 		while(cnt < size){
 			if (USB_Serial->available() > 0){
-				k = USB_read();
+				k = USB_Serial->read();
 				cnt++;
 
 				if(b2a > 0){
@@ -241,7 +242,7 @@ void writefile(const char *fname, int size, char code)
 		cnt = 0;
 		while(cnt < size){
 			if (USB_Serial->available() > 0){
-				k = USB_read();
+				k = USB_Serial->read();
 				cnt++;
 
 				if(b2a > 0){
@@ -296,7 +297,7 @@ void readfile(const char *fname, char code)
 	USB_Serial->println();
 
 	//シリアルバッファ消去
-	while(k >= 0){	k = USB_read();	}
+	while(k >= 0){	k = USB_Serial->read();	}
 
 	//60sec間入力を待ちます
 	if(waitRcv(60000) == 0){
@@ -304,8 +305,8 @@ void readfile(const char *fname, char code)
 	}
 
 	//シリアルバッファ消去
-	k = USB_read();
-	while(k >= 0){	k = USB_read();	}
+	k = USB_Serial->read();
+	while(k >= 0){	k = USB_Serial->read();	}
 
 	USB_Serial->println();
 
@@ -321,8 +322,8 @@ void readfile(const char *fname, char code)
 	}
 
 	//シリアルバッファ消去
-	k = USB_read();
-	while(k >= 0){	k = USB_read();	}
+	k = USB_Serial->read();
+	while(k >= 0){	k = USB_Serial->read();	}
 
 	//ファイルオープン
 	if(EEP.fopen(fp, fname, EEP_READ) == -1){
@@ -359,6 +360,7 @@ int fileloader(const char* str0, const char* str1)
 	tc[0] = CommandData[0];
 	tc[1] = CommandData[1];
 
+	//USB_Serial->println(">");
 	while(true){
 		//LEDを点灯する
 		digitalWrite(RB_LED, HIGH);
@@ -470,7 +472,14 @@ int fileloader(const char* str0, const char* str1)
 				strcpy(fname, fs[0]);
 				size = atoi(fs[1]);
 
+				//0xFEアックを返さないようにする
+				if(Ack_FE_mode == 1 && CommandData[0] == 'W'){ Ack_FE_mode = 0; }
+
+				//ファイルを保存します
 				writefile(fname, size, CommandData[0]);
+
+				//Ack_FE_mode==0だったら、0xFEアックを返すように戻す
+				if(Ack_FE_mode == 0 && CommandData[0] == 'W'){ Ack_FE_mode = 1; }
 
 				for(int i=0; i<j; i++){ *(fs[i] - 1) = ' '; }
 			}
@@ -502,7 +511,14 @@ int fileloader(const char* str0, const char* str1)
 					strcat(RubyFilename, ".mrb");				
 				}
 
+				//0xFEアックを返さないようにする
+				if(Ack_FE_mode == 1 && CommandData[0] == 'X'){ Ack_FE_mode = 0; }
+
+				//ファイルを保存します
 				writefile(RubyFilename, size, CommandData[0]);
+
+				//Ack_FE_mode==0だったら、0xFEアックを返すように戻す
+				if(Ack_FE_mode == 0 && CommandData[0] == 'X'){ Ack_FE_mode = 1; }
 
 				for(int i=0; i<j; i++){ *(fs[i] - 1) = ' '; }
 
@@ -552,7 +568,10 @@ int fileloader(const char* str0, const char* str1)
 		}
 		else{
 			USB_Serial->println();
-			USB_Serial->println("EEPROM FileWriter Ver. 1.57");
+			if(Ack_FE_mode == 1){
+				USB_Serial->print("*");
+			}
+			USB_Serial->println("EEPROM FileWriter Ver. 1.58");
 			USB_Serial->println(" Command List");
 			USB_Serial->println(" L:List Filename..........>L [ENTER]");
 			USB_Serial->println(" W:Write File.............>W Filename Size [ENTER]");

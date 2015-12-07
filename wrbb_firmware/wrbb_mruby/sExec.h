@@ -33,5 +33,9 @@ bool RubyRun( void );
 void Serial_print_error(mrb_state *mrb, mrb_value obj);
 
 
+//**************************************************
+// ピンモードを入力に初期化します
+//**************************************************
+void pinModeInit();
 
 #endif // _SEXEC_H_

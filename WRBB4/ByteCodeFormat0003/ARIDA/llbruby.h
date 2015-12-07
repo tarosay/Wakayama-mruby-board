@@ -106,6 +106,14 @@
 	#define RB_PIN15	15
 	#define RB_PIN16	16
 	#define RB_PIN17	17
+
+	#define RB_PIN20	33
+	#define RB_PIN21	29
+	#define RB_PIN22	5
+	#define RB_PIN23	45
+	#define RB_PIN24	54
+	#define RB_PIN25	100
+
 #elif BOARD == BOARD_P01
 	#if BYTECODE == BYTE_CODE2
 		#if FIRMWARE == MASTER
@@ -141,6 +149,14 @@
 	#define RB_PIN15	15
 	#define RB_PIN16	16
 	#define RB_PIN17	17
+
+	#define RB_PIN20	33
+	#define RB_PIN21	29
+	#define RB_PIN22	5
+	#define RB_PIN23	45
+	#define RB_PIN24	54
+	#define RB_PIN25	100
+
 #elif BOARD == BOARD_P02
 	#if BYTECODE == BYTE_CODE2
 		#if FIRMWARE == MASTER
@@ -180,6 +196,14 @@
 	#define RB_PIN15	15
 	#define RB_PIN16	16
 	#define RB_PIN17	17
+
+	#define RB_PIN20	33
+	#define RB_PIN21	29
+	#define RB_PIN22	5
+	#define RB_PIN23	45
+	#define RB_PIN24	54
+	#define RB_PIN25	100
+
 #elif BOARD == BOARD_P04
 	#if BYTECODE == BYTE_CODE2
 		#if FIRMWARE == MASTER
@@ -193,7 +217,7 @@
 		#endif
 	#elif BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "ARIDA4-1.25(2015/12/5)f3"
+			#define WRBB_VERSION "ARIDA4-1.29(2015/12/8)f3"
 		#elif FIRMWARE == JAM
 			#define WRBB_VERSION "UmeJam2-1.13(2015/7/19)f3"
 		#elif FIRMWARE == SDBT
@@ -223,6 +247,14 @@
 	#define RB_PIN15	15
 	#define RB_PIN16	16
 	#define RB_PIN17	17
+
+	#define RB_PIN20	33
+	#define RB_PIN21	29
+	#define RB_PIN22	5
+	#define RB_PIN23	45
+	#define RB_PIN24	54
+	#define RB_PIN25	100
+
 #endif
 
 #define RB_LED	PIN_LED0

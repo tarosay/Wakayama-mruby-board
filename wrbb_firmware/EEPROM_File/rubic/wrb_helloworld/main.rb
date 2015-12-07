@@ -1,8 +1,14 @@
 #!mruby
-Serial.begin(0, 115200)
-10.times do |n|
-    Serial.println(0, "#{n.to_s}:Hello world!")
-    delay 500
-end
+@M = MemFile
 
-#System.setrun("main.mrb")
+@M.copy("main.mrb", "hello.mrb")
+
+Serial.begin(0, 115200)
+k = 1
+8.times do |n|
+    led k
+    k = 1-k
+    Serial.println(0, "#{n.to_s}:Hello WRB!")
+    delay 300
+end
+led 0

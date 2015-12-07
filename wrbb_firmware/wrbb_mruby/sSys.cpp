@@ -159,6 +159,17 @@ mrb_value mrb_system_fileload(mrb_state *mrb, mrb_value self)
 }
 
 //**************************************************
+// リセットします
+// System.reset()
+//**************************************************
+mrb_value mrb_system_reset(mrb_state *mrb, mrb_value self)
+{
+	system_reboot( REBOOT_USERAPP );	//リセット後にユーザアプリを起動する
+
+	return mrb_nil_value();	//戻り値は無しですよ。
+}
+
+//**************************************************
 // ライブラリを定義します
 //**************************************************
 void sys_Init(mrb_state *mrb)
@@ -166,6 +177,7 @@ void sys_Init(mrb_state *mrb)
 	struct RClass *systemModule = mrb_define_module(mrb, "System");
 
 	mrb_define_module_function(mrb, systemModule, "exit", mrb_system_exit, MRB_ARGS_NONE());
+	mrb_define_module_function(mrb, systemModule, "reset", mrb_system_reset, MRB_ARGS_NONE());
 	mrb_define_module_function(mrb, systemModule, "setrun", mrb_system_setrun, MRB_ARGS_REQ(1));
 	mrb_define_module_function(mrb, systemModule, "version", mrb_system_version, MRB_ARGS_OPT(1));
 

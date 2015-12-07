@@ -227,3 +227,38 @@ void Serial_print_error(mrb_state *mrb, mrb_value obj)
 		Serial.println(RSTRING_PTR(v));
 	}
 }
+
+//**************************************************
+// ピンモードを入力に初期化します
+//**************************************************
+void pinModeInit()
+{
+    pinMode(RB_LED, OUTPUT);
+
+    pinMode(RB_PIN0, INPUT);
+    pinMode(RB_PIN1, INPUT);
+    pinMode(RB_PIN2, INPUT);
+    pinMode(RB_PIN3, INPUT);
+    pinMode(RB_PIN4, INPUT);
+    pinMode(RB_PIN5, INPUT);
+    pinMode(RB_PIN6, INPUT);
+    pinMode(RB_PIN7, INPUT);
+    pinMode(RB_PIN8, INPUT);
+    pinMode(RB_PIN9, INPUT);
+    pinMode(RB_PIN10, INPUT);
+    pinMode(RB_PIN11, INPUT);
+    pinMode(RB_PIN12, INPUT);
+    pinMode(RB_PIN13, INPUT);
+    pinMode(RB_PIN14, INPUT);
+    pinMode(RB_PIN15, INPUT);
+    pinMode(RB_PIN16, INPUT);
+    pinMode(RB_PIN17, INPUT);
+    pinMode(RB_PIN18, INPUT);
+    pinMode(RB_PIN19, INPUT);
+
+	pinMode(RB_PIN20, INPUT);
+    pinMode(RB_PIN21, INPUT);
+    pinMode(RB_PIN22, INPUT);
+    pinMode(RB_PIN23, INPUT);
+    pinMode(RB_PIN24, INPUT);
+}

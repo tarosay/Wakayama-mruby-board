@@ -26,6 +26,7 @@ char RubyFilename[RUBY_FILENAME_SIZE];
 char ExeFilename[RUBY_FILENAME_SIZE];		//現在実行されているファイルのパス名
 
 extern volatile char ProgVer[];
+extern int Ack_FE_mode;
 
 //**********************************
 //初期化を行います
@@ -39,8 +40,9 @@ int i;
 	//EEPファイル関連の初期化
 	EEP.begin();
 
-	//スタートファイルを読み込みます
+	//スタートファイルと、0xFEアックを返すかどうかのモードを読み込みます
 	RubyStartFileName[0] = 0;
+	Ack_FE_mode = -1;
 
 	FILEEEP fpj;
 	FILEEEP *fp = &fpj;
@@ -48,10 +50,11 @@ int i;
 	//スタートファイル名を読み込みます
 	if(EEP.fopen( fp, XML_FILENAME, EEP_READ ) == -1){
 		strcpy( RubyStartFileName, RUBY_FILENAME );
+		Ack_FE_mode = 1;
 	}
 	else{
 
-		//file= が出るまでひたすら読み込みます
+		//file と ack が出るまでひたすら読み込みます
 		int pos = 0;
 		while( !EEP.fEof(fp) ){
 			EEP.fseek(fp, pos, EEP_SEEKTOP);
@@ -66,7 +69,7 @@ int i;
 				dat[i] = (char)en;
 			}
 
-			if( dat[0]=='f' && dat[1]=='i' && dat[2]=='l' && dat[3]=='e'  ){
+			if( RubyStartFileName[0]==0 && dat[0]=='f' && dat[1]=='i' && dat[2]=='l' && dat[3]=='e'  ){
 
 				//見つかったので " or ' まで読み飛ばす
 				while( !EEP.fEof(fp) ){
@@ -92,19 +95,54 @@ int i;
 					}
 				}
 
-				break;
+				//break;
+			}
+
+			if( Ack_FE_mode==-1 && dat[0]=='a' && dat[1]=='c' && dat[2]=='k'  ){
+
+				//見つかったので " or ' まで読み飛ばす
+				while( !EEP.fEof(fp) ){
+					en = EEP.fread(fp);
+					if( en<0 ){ break; }
+					if( (char)en==0x22 || (char)en==0x27 ){
+
+						//見つかったので、先頭の文字が tか fかを調べます
+						en = EEP.fread(fp);
+						if(en == 't'){
+							//0xFE ackを返す
+							Ack_FE_mode = 1;
+						}
+						else{
+							Ack_FE_mode = 2;
+						}
+						break;
+					}
+				}
+
+				//break;
 			}
 			pos++;
 		}
 		EEP.fclose(fp);
 	}
 
-	if( RubyStartFileName[0]==0 ){
+	if(RubyStartFileName[0] == 0){
 		strcpy( RubyStartFileName, RUBY_FILENAME );
 	}
 
 	//RubyFilenameにスタートファイル名をコピーします
 	strcpy( RubyFilename, RubyStartFileName );
+}
+
+//**************************************************
+//  1000Hz 1msec割り込み
+//**************************************************
+static void timer1000hz()
+{
+	if(Ack_FE_mode == 1 && Serial.peek() == -2){
+		Serial.read();
+		Serial.write(0xFE);
+	}
 }
 
 //**************************************************
@@ -114,6 +152,9 @@ void setup()
 {
     pinMode(RB_LED, OUTPUT);
 
+	//ピンモードを入力に初期化します
+	pinModeInit();
+	
 	//シリアル通信の初期化
 	Serial.begin(115200, SCI_USB0);		//仮想USBシリアル
     Serial.setDefault();
@@ -121,6 +162,11 @@ void setup()
 
 	//vmの初期化
 	init_vm();
+
+	//割り込みタイマー設定
+	if(Ack_FE_mode == 1){
+		timer_regist_userfunc(timer1000hz);
+	}
 
 	//Port 3-5がHIGHだったら、EEPROMファイルローダーに飛ぶ
 	if( FILE_LOAD == 1 ){

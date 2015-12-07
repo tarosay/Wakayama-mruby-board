@@ -30,6 +30,6 @@ end
 
 	@S.println(@Usb, "Hello mruby")
 
-	delay(4000)
+	delay(400)
 
 	#終わり
