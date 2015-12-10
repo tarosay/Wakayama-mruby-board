@@ -39,7 +39,7 @@
   Thank you.
 
 #How to use Wakayama.rb board
-http://www.slideshare.net/MinaoYamamoto/wakayamarb-board
+http://www.slideshare.net/MinaoYamamoto/wakayamarb-arida-4
 
 #License
 
