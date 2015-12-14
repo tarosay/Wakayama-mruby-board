@@ -10,11 +10,12 @@ DMP = $(CCPATH)rx-elf-objdump
 #PANCAKE = ./wrbb_mruby/sPanCake.o 
 SDCARD = ./wrbb_mruby/sSdCard.o 
 RTC = ./wrbb_mruby/sRtc.o 
+#WIFI = ./wrbb_mruby/sWiFi.o
 OBJS =	common/intvect.o common/lowlevel.o \
 		./wrbb_eepfile/eepfile.o ./wrbb_eepfile/eeploader.o \
 		./wrbb_mruby/sExec.o ./wrbb_mruby/sKernel.o ./wrbb_mruby/sSys.o ./wrbb_mruby/sSerial.o \
 		./wrbb_mruby/sMem.o ./wrbb_mruby/sI2c.o ./wrbb_mruby/sServo.o \
-		$(RTC) $(PANCAKE) $(SDCARD) \
+		$(RTC) $(PANCAKE) $(SDCARD) $(WIFI) \
 		./wrbb_mruby/libmruby.a \
 		$(TARGET).o 
 
