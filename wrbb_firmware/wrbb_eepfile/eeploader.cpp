@@ -351,7 +351,14 @@ int fileloader(const char* str0, const char* str1)
 {
 	char fname[COMMAND_LENGTH];
 	int size = 0;
+
+#if BOARD == BOARD_GR
+	int led = digitalRead(PIN_LED0) | ( digitalRead(PIN_LED1)<<1) | (digitalRead(PIN_LED2)<<2)| (digitalRead(PIN_LED3)<<3);
+#else
 	int led = digitalRead(RB_LED);
+#endif
+
+
 	char tc[2];
 	char *fs[4];
 
@@ -362,9 +369,16 @@ int fileloader(const char* str0, const char* str1)
 
 	//USB_Serial->println(">");
 	while(true){
-		//LEDを点灯する
-		digitalWrite(RB_LED, HIGH);
 
+		//LEDを点灯する
+#if BOARD == BOARD_GR
+		digitalWrite(PIN_LED0, HIGH);
+		digitalWrite(PIN_LED1, HIGH);
+		digitalWrite(PIN_LED2, HIGH);
+		digitalWrite(PIN_LED3, HIGH);
+#else
+		digitalWrite(RB_LED, HIGH);
+#endif
 		//コマンド待ち
 		USB_Serial->println();
 		USB_Serial->print("WAKAYAMA.RB Board Ver.");
@@ -591,7 +605,14 @@ int fileloader(const char* str0, const char* str1)
 		}
 	}
 
+#if BOARD == BOARD_GR
+	digitalWrite(PIN_LED0, led & 1);
+	digitalWrite(PIN_LED1, (led >> 1) & 1);
+	digitalWrite(PIN_LED2, (led >> 2) & 1);
+	digitalWrite(PIN_LED3, (led >> 3) & 1);
+#else
 	digitalWrite(RB_LED, led);
+#endif
 
 	if(StopFlg == true){
 		return 1;

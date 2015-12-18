@@ -80,9 +80,9 @@
 		#endif
 	#elif BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "SakuRuby-1.29(2015/12/14)f3"
+			#define WRBB_VERSION "SakuRuby-1.30(2015/12/19)f3"
 		#elif FIRMWARE == JAM
-			#define WRBB_VERSION "SakuraJam-1.29(2015/12/14)f3"
+			#define WRBB_VERSION "SakuraJam-1.30(2015/12/19)f3"
 		#endif
 	#endif
 
@@ -123,9 +123,9 @@
 		#endif
 	#elif BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "ARIDA1-1.13(2015/7/19)f3"
+			#define WRBB_VERSION "ARIDA1-1.29(2015/12/15)f3"
 		#elif FIRMWARE == JAM
-			#define WRBB_VERSION "UmeJam1-1.13(2015/7/19)f3"
+			#define WRBB_VERSION "UmeJam1-1.29(2015/12/15)f3"
 		#endif
 	#endif
 
@@ -168,11 +168,11 @@
 		#endif
 	#elif BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "ARIDA2-1.13(2015/7/19)f3"
+			#define WRBB_VERSION "ARIDA2-1.29(2015/12/15)f3"
 		#elif FIRMWARE == JAM
-			#define WRBB_VERSION "UmeJam2-1.13(2015/7/19)f3"
+			#define WRBB_VERSION "UmeJam2-1.29(2015/12/15)f3"
 		#elif FIRMWARE == SDBT
-			#define WRBB_VERSION "SDBT2-1.13(2015/7/19)f3"
+			#define WRBB_VERSION "SDBT2-1.29(2015/12/15)f3"
 		#endif
 	#endif
 
@@ -205,25 +205,15 @@
 	#define RB_PIN25	100
 
 #elif BOARD == BOARD_P04
-	#if BYTECODE == BYTE_CODE2
-		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "ARIDA4-1.16(2015/11/24)f2"
-		#elif FIRMWARE == JAM
-			#define WRBB_VERSION "UmeJam2-1.13(2015/7/19)f2"
-		#elif FIRMWARE == SDBT
-			#define WRBB_VERSION "SDBT2-1.13(2015/7/19)f2"
-		#elif FIRMWARE == SDWF
-			#define WRBB_VERSION "SDWF2-1.15(2015/9/23)f3"
-		#endif
-	#elif BYTECODE == BYTE_CODE3
+	#if BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
 			#define WRBB_VERSION "ARIDA4-1.29(2015/12/8)f3"
 		#elif FIRMWARE == JAM
-			#define WRBB_VERSION "UmeJam2-1.13(2015/7/19)f3"
+			#define WRBB_VERSION "UmeJam4-1.29(2015/12/15)f3"
 		#elif FIRMWARE == SDBT
-			#define WRBB_VERSION "SDBT2-1.13(2015/7/19)f3"
+			#define WRBB_VERSION "SDBT4-1.29(2015/12/15)f3"
 		#elif FIRMWARE == SDWF
-			#define WRBB_VERSION "SDWF2-1.15(2015/10/23)f3"
+			#define WRBB_VERSION "SDWF4-1.29(2015/12/15)f3"
 		#endif
 	#endif
 

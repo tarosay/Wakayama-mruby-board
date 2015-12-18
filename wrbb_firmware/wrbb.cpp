@@ -152,6 +152,13 @@ void setup()
 {
     pinMode(RB_LED, OUTPUT);
 
+#if BOARD == BOARD_GR
+    pinMode(PIN_LED0, OUTPUT);
+    pinMode(PIN_LED1, OUTPUT);
+    pinMode(PIN_LED2, OUTPUT);
+    pinMode(PIN_LED3, OUTPUT);
+#endif
+
 	//ピンモードを入力に初期化します
 	pinModeInit();
 	

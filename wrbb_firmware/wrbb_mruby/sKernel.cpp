@@ -301,12 +301,15 @@ int value;
 
 	mrb_get_args(mrb, "i", &value);
 
-	if( value==0 ){
-		digitalWrite( RB_LED, 0 );
-	}
-	else{
-		digitalWrite( RB_LED, 1 );
-	}
+#if BOARD == BOARD_GR
+	digitalWrite( PIN_LED0, value & 1 );
+	digitalWrite( PIN_LED1, (value>>1) & 1 );
+	digitalWrite( PIN_LED2, (value>>2) & 1 );
+	digitalWrite( PIN_LED3, (value>>3) & 1 );
+#else
+	digitalWrite( RB_LED, value & 1 );
+#endif
+
 	return mrb_nil_value();			//戻り値は無しですよ。
 }
 

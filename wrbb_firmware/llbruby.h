@@ -80,9 +80,9 @@
 		#endif
 	#elif BYTECODE == BYTE_CODE3
 		#if FIRMWARE == MASTER
-			#define WRBB_VERSION "SakuRuby-1.29(2015/12/14)f3"
+			#define WRBB_VERSION "SakuRuby-1.30(2015/12/19)f3"
 		#elif FIRMWARE == JAM
-			#define WRBB_VERSION "SakuraJam-1.29(2015/12/14)f3"
+			#define WRBB_VERSION "SakuraJam-1.30(2015/12/19)f3"
 		#endif
 	#endif
 
