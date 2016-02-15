@@ -45,7 +45,3 @@ http://www.slideshare.net/MinaoYamamoto/wakayamarb-arida-4
 #License
  Wakayama-mruby-board is released under the [MIT License](MITL).
 
-    Copyright (c) 2016 Wakayama-mruby-board developers
-under the MIT License:
-http://www.opensource.org/licenses/mit-license.php
-
