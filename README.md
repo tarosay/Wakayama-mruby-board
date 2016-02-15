@@ -14,6 +14,7 @@
 
   mruby ver1.0.0 -> ByteCode Format Ver.0002
   mruby ver1.1.0 -> ByteCode Format Ver.0003
+  mruby ver1.2.0 -> ByteCode Format Ver.0003
 
   Version ARIDA2 - 1.13 (2015/7/19) f3
   
@@ -42,14 +43,9 @@
 http://www.slideshare.net/MinaoYamamoto/wakayamarb-arida-4
 
 #License
+ Wakayama-mruby-board is released under the [MIT License](MITL).
 
-    Copyright (c) 2015 Minao Yamamoto
-
+    Copyright (c) 2016 Wakayama-mruby-board developers
 under the MIT License:
-
 http://www.opensource.org/licenses/mit-license.php
 
-
-#Author
-
-    Minao Yamamoto
